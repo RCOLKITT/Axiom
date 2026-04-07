@@ -180,6 +180,12 @@ Axiom is in active development. Current capabilities:
 - ✅ Spec inference from Python
 - 🚧 Self-hosting (1% of Axiom is spec-driven)
 
+## Documentation
+
+- [Getting Started](docs/getting-started.md) - Installation and first spec tutorial
+- [Spec Format Reference](docs/spec-format.md) - Complete YAML syntax
+- [CLI Reference](docs/cli-reference.md) - All commands and options
+
 ## Contributing
 
 Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
