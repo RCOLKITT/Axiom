@@ -1,0 +1,33 @@
+[project]
+name = "axiom"
+version = "0.1.0"
+spec_dir = "specs"
+generated_dir = "generated"
+cache_dir = ".axiom-cache"
+
+[generation]
+default_model = "claude-sonnet-4-20250514"
+fallback_model = "claude-haiku-4-5-20251001"
+default_target = "python:function"
+temperature = 0.0
+max_retries = 3
+timeout_seconds = 60
+
+[generation.models]
+"python:function" = "claude-sonnet-4-20250514"
+"python:fastapi" = "claude-sonnet-4-20250514"
+
+[verification]
+run_examples = true
+run_invariants = true
+run_performance = false
+hypothesis_max_examples = 100
+timeout_seconds = 120
+
+[cache]
+enabled = true
+strategy = "content-hash"
+
+[logging]
+level = "INFO"
+format = "console"

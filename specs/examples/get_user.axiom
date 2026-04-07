@@ -1,0 +1,78 @@
+axiom: "0.1"
+
+metadata:
+  name: get_user
+  version: "1.0.0"
+  description: "Get a user by ID via GET request"
+  target: "python:fastapi"
+  tags:
+    - api
+    - users
+    - phase2
+
+intent: |
+  Retrieve a user by their ID. The endpoint accepts a UUID in the path
+  and returns the user's information. For this example, we simulate a
+  database by accepting any valid UUID format and returning mock data.
+  Returns 404 if the UUID starts with "00000000" (simulating not found).
+
+interface:
+  method: GET
+  path: "/api/users/{user_id}"
+  function_name: get_user
+  path_parameters:
+    - name: user_id
+      type: str
+      description: "User ID (UUID format)"
+      constraints: "must be valid UUID format"
+  response:
+    success:
+      status: 200
+      body:
+        id: str
+        email: str
+        name: str
+        created_at: str
+    errors:
+      - status: 400
+        when: "user_id is not a valid UUID"
+      - status: 404
+        when: "User not found (UUID starts with 00000000)"
+
+examples:
+  - name: valid_user_found
+    input:
+      user_id: "550e8400-e29b-41d4-a716-446655440000"
+    expected_output:
+      id: "550e8400-e29b-41d4-a716-446655440000"
+
+  - name: another_valid_user
+    input:
+      user_id: "123e4567-e89b-12d3-a456-426614174000"
+    expected_output:
+      id: "123e4567-e89b-12d3-a456-426614174000"
+
+  - name: user_not_found
+    input:
+      user_id: "00000000-0000-0000-0000-000000000000"
+    expected_output:
+      raises: ValueError
+      message_contains: "not found"
+
+  - name: invalid_uuid_format
+    input:
+      user_id: "not-a-uuid"
+    expected_output:
+      raises: ValueError
+      message_contains: "UUID"
+
+  - name: invalid_uuid_too_short
+    input:
+      user_id: "12345"
+    expected_output:
+      raises: ValueError
+      message_contains: "UUID"
+
+constraints:
+  performance:
+    max_response_time_ms: 50

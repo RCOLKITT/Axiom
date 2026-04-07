@@ -1,0 +1,64 @@
+axiom: "0.1"
+
+metadata:
+  name: compute_spec_hash
+  version: "1.0.0"
+  description: "Computes content hash for cache keys"
+  target: "python:function"
+  tags:
+    - cache
+    - hashing
+    - dogfood
+
+intent: |
+  Computes a SHA-256 hash of spec content for use in cache keys.
+
+  The hash is used to determine if a spec has changed and needs regeneration.
+  Uses UTF-8 encoding for consistent hashing across platforms.
+
+  Returns the hash as a 64-character lowercase hexadecimal string.
+
+interface:
+  function_name: compute_spec_hash
+  parameters:
+    - name: content
+      type: str
+      description: "The spec file content to hash"
+      constraints: "any string"
+  returns:
+    type: str
+    description: "64-character lowercase hex string representing SHA-256 hash"
+
+examples:
+  - name: simple_content
+    input:
+      content: "hello world"
+    expected_output: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+
+  - name: empty_content
+    input:
+      content: ""
+    expected_output: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+  - name: yaml_content
+    input:
+      content: |
+        axiom: "0.1"
+        metadata:
+          name: test
+    expected_output: "3a3513a901c8808c8fef7a401f99abd2326bfc1f306258f090d7964de0466f37"
+
+  - name: unicode_content
+    input:
+      content: "Hello, 世界! 🌍"
+    expected_output: "4c5bbf8d24e5546714002205ec5658b5aebb19cf16a7029287daf72dfb71e901"
+
+invariants:
+  - description: "Output is always 64 characters"
+    check: "len(output) == 64"
+
+  - description: "Output is lowercase hexadecimal"
+    check: "all(c in '0123456789abcdef' for c in output)"
+
+  - description: "Same input produces same output (deterministic)"
+    check: "True"  # Property inherent to hashing

@@ -1,0 +1,130 @@
+axiom: "0.1"
+
+metadata:
+  name: parse_csv_row
+  version: "1.0.0"
+  description: "Parses a single CSV row into a list of fields"
+  target: "python:function"
+  tags:
+    - parsing
+    - csv
+
+intent: |
+  Parses a single line of CSV data into a list of string fields.
+
+  Rules:
+  - Fields are separated by commas
+  - Fields may be optionally quoted with double quotes
+  - Quoted fields can contain commas, which are treated as literal characters
+  - Double quotes inside quoted fields are escaped by doubling them ("")
+  - Leading and trailing whitespace in unquoted fields is preserved
+  - Leading and trailing whitespace around quoted fields (outside the quotes) is ignored
+  - Empty fields are represented as empty strings
+  - An empty input string returns a list with one empty string [""]
+
+  This is a simplified CSV parser for single rows. It does NOT handle:
+  - Multi-line fields (newlines within quotes)
+  - Different delimiters or quote characters
+  - BOM characters
+
+interface:
+  function_name: parse_csv_row
+  parameters:
+    - name: row
+      type: str
+      description: "A single line of CSV data"
+      constraints: "any string, no embedded newlines"
+  returns:
+    type: list[str]
+    description: "List of parsed field values"
+
+examples:
+  - name: simple_row
+    input:
+      row: "a,b,c"
+    expected_output: ["a", "b", "c"]
+
+  - name: with_spaces
+    input:
+      row: "a, b, c"
+    expected_output: ["a", " b", " c"]
+
+  - name: quoted_field
+    input:
+      row: '"hello",world'
+    expected_output: ["hello", "world"]
+
+  - name: quoted_with_comma
+    input:
+      row: '"hello, world",test'
+    expected_output: ["hello, world", "test"]
+
+  - name: escaped_quote
+    input:
+      row: '"say ""hello""",test'
+    expected_output: ['say "hello"', "test"]
+
+  - name: empty_fields
+    input:
+      row: "a,,c"
+    expected_output: ["a", "", "c"]
+
+  - name: empty_string
+    input:
+      row: ""
+    expected_output: [""]
+
+  - name: single_value
+    input:
+      row: "hello"
+    expected_output: ["hello"]
+
+  - name: all_quoted
+    input:
+      row: '"a","b","c"'
+    expected_output: ["a", "b", "c"]
+
+  - name: mixed_quoted_unquoted
+    input:
+      row: 'a,"b,c",d'
+    expected_output: ["a", "b,c", "d"]
+
+  - name: quoted_empty
+    input:
+      row: '"",a,""'
+    expected_output: ["", "a", ""]
+
+  - name: whitespace_around_quoted
+    input:
+      row: '  "hello"  ,world'
+    expected_output: ["hello", "world"]
+
+  - name: trailing_comma
+    input:
+      row: "a,b,"
+    expected_output: ["a", "b", ""]
+
+  - name: leading_comma
+    input:
+      row: ",a,b"
+    expected_output: ["", "a", "b"]
+
+  - name: only_commas
+    input:
+      row: ",,"
+    expected_output: ["", "", ""]
+
+  - name: complex_mixed
+    input:
+      row: 'John,"Doe, Jr.",30,"New York, NY"'
+    expected_output: ["John", "Doe, Jr.", "30", "New York, NY"]
+
+invariants:
+  - description: "Result is always a non-empty list"
+    check: "len(output) >= 1"
+
+  - description: "Number of fields is at least the number of unquoted commas plus one"
+    # This is a rough check - quoted commas shouldn't count
+
+  - description: "All elements are strings"
+    check: "all(isinstance(f, str) for f in output)"

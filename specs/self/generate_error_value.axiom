@@ -1,0 +1,84 @@
+axiom: "0.1"
+
+metadata:
+  name: generate_error_value
+  version: "1.0.0"
+  description: "Generates error-inducing values for testing edge cases"
+  target: "python:function"
+  tags:
+    - lint
+    - autofix
+    - testing
+    - dogfood
+
+intent: |
+  Generates a value likely to cause errors or edge-case behavior
+  for a given type. Used by lint auto-fixer to add error case examples.
+
+  Type mapping:
+  - str/string -> "" (empty string)
+  - int/integer -> -1 (often invalid index/count)
+  - float -> infinity
+  - list -> [] (empty list)
+  - dict -> {} (empty dict)
+  - path -> "/nonexistent/path"
+  - None or unknown -> None
+
+  These values are chosen to commonly trigger validation errors
+  or boundary conditions in typical functions.
+
+interface:
+  function_name: generate_error_value
+  parameters:
+    - name: type_str
+      type: str | None
+      description: "The type string (e.g., 'str', 'int', 'list')"
+  returns:
+    type: object
+    description: "A value likely to cause errors for that type"
+
+examples:
+  - name: string_error
+    input:
+      type_str: "str"
+    expected_output: ""
+
+  - name: int_error
+    input:
+      type_str: "int"
+    expected_output: -1
+
+  - name: float_error
+    input:
+      type_str: "float"
+    expected_output:
+      raises: null
+
+  - name: list_error
+    input:
+      type_str: "list"
+    expected_output: []
+
+  - name: dict_error
+    input:
+      type_str: "dict"
+    expected_output: {}
+
+  - name: path_error
+    input:
+      type_str: "path"
+    expected_output: "/nonexistent/path"
+
+  - name: none_type
+    input:
+      type_str: null
+    expected_output: null
+
+  - name: unknown_type
+    input:
+      type_str: "CustomClass"
+    expected_output: null
+
+invariants:
+  - description: "Output represents an edge case value"
+    check: "True"

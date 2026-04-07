@@ -1,0 +1,113 @@
+axiom: "0.1"
+
+metadata:
+  name: type_to_isinstance
+  version: "1.0.0"
+  description: "Converts type strings to isinstance check expressions"
+  target: "python:function"
+  tags:
+    - lint
+    - invariants
+    - dogfood
+
+intent: |
+  Converts a type string from a spec interface into a string suitable
+  for use in an isinstance() check.
+
+  This enables auto-generation of type invariants like:
+    isinstance(output, str)
+
+  Type mapping:
+  - str/string -> "str"
+  - int/integer -> "int"
+  - float -> "float"
+  - number -> "(int, float)"
+  - bool/boolean -> "bool"
+  - list/array -> "list"
+  - dict -> "dict"
+  - tuple -> "tuple"
+  - set -> "set"
+  - Optional[*] -> None (can be None, so no single-type check)
+  - Unknown types -> None
+
+  Case insensitive. Returns None if no simple isinstance check applies.
+
+interface:
+  function_name: type_to_isinstance
+  parameters:
+    - name: type_str
+      type: str
+      description: "The type string from interface definition"
+  returns:
+    type: str | None
+    description: "String for isinstance second argument, or None"
+
+examples:
+  - name: basic_str
+    input:
+      type_str: "str"
+    expected_output: "str"
+
+  - name: full_string
+    input:
+      type_str: "string"
+    expected_output: "str"
+
+  - name: basic_int
+    input:
+      type_str: "int"
+    expected_output: "int"
+
+  - name: integer_type
+    input:
+      type_str: "integer"
+    expected_output: "int"
+
+  - name: float_type
+    input:
+      type_str: "float"
+    expected_output: "float"
+
+  - name: number_type
+    input:
+      type_str: "number"
+    expected_output: "(int, float)"
+
+  - name: bool_type
+    input:
+      type_str: "bool"
+    expected_output: "bool"
+
+  - name: boolean_type
+    input:
+      type_str: "boolean"
+    expected_output: "bool"
+
+  - name: list_type
+    input:
+      type_str: "list"
+    expected_output: "list"
+
+  - name: array_type
+    input:
+      type_str: "array"
+    expected_output: "list"
+
+  - name: dict_type
+    input:
+      type_str: "dict"
+    expected_output: "dict"
+
+  - name: optional_returns_none
+    input:
+      type_str: "Optional[str]"
+    expected_output: null
+
+  - name: unknown_returns_none
+    input:
+      type_str: "CustomType"
+    expected_output: null
+
+invariants:
+  - description: "Output is either a string or None"
+    check: "output is None or isinstance(output, str)"

@@ -1,0 +1,75 @@
+axiom: "0.1"
+
+metadata:
+  name: validate_email
+  version: "1.0.0"
+  description: Validate email address format
+  target: python:function
+
+intent: |
+  Validate that an email address has a valid format.
+  Returns True if valid, False otherwise.
+  A valid email must have:
+  - Exactly one @ symbol
+  - Non-empty local part (before @)
+  - Non-empty domain part (after @)
+  - At least one dot in the domain part
+
+interface:
+  function_name: validate_email
+  parameters:
+    - name: email
+      type: str
+      description: The email address to validate
+  returns:
+    type: bool
+    description: True if the email is valid, False otherwise
+
+examples:
+  - name: valid_simple
+    input:
+      email: "user@example.com"
+    expected_output: true
+
+  - name: valid_subdomain
+    input:
+      email: "user@mail.example.com"
+    expected_output: true
+
+  - name: invalid_no_at
+    input:
+      email: "userexample.com"
+    expected_output: false
+
+  - name: invalid_no_domain
+    input:
+      email: "user@"
+    expected_output: false
+
+  - name: invalid_no_local
+    input:
+      email: "@example.com"
+    expected_output: false
+
+  - name: invalid_no_dot
+    input:
+      email: "user@example"
+    expected_output: false
+
+  - name: invalid_empty
+    input:
+      email: ""
+    expected_output: false
+
+invariants:
+  - description: Empty string always returns False
+    check: |
+      validate_email("") == False
+
+  - description: Result is always boolean
+    check: |
+      isinstance(validate_email(email), bool)
+    strategy:
+      type: hypothesis
+      generators:
+        email: text(min_size=0, max_size=100)

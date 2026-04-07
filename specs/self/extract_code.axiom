@@ -1,0 +1,75 @@
+axiom: "0.1"
+
+metadata:
+  name: extract_code
+  version: "1.0.0"
+  description: "Extracts Python code from LLM response text"
+  target: "python:function"
+  tags:
+    - codegen
+    - parsing
+    - dogfood
+
+intent: |
+  Extracts Python code from an LLM response string.
+
+  The LLM may format code in several ways:
+  1. Wrapped in ```python ... ``` markdown fences (most common)
+  2. Wrapped in ``` ... ``` generic fences
+  3. Raw Python code without any fencing
+
+  Rules:
+  - If markdown fences are present, extract code from the first fenced block
+  - Strip any leading/trailing whitespace from the extracted code
+  - Return the code as-is (no modification to the code content)
+  - If no code is found, return empty string
+
+  This is a critical utility for the Axiom code generation pipeline.
+
+interface:
+  function_name: extract_code
+  parameters:
+    - name: response
+      type: str
+      description: "The raw LLM response text"
+  returns:
+    type: str
+    description: "The extracted Python code, or empty string if no code found"
+
+examples:
+  - name: python_fenced_code
+    input:
+      response: "Here's the code:\n\n```python\ndef hello():\n    return \"world\"\n```\n\nThat's it."
+    expected_output: "def hello():\n    return \"world\""
+
+  - name: generic_fenced_code
+    input:
+      response: "```\ndef add(a, b):\n    return a + b\n```"
+    expected_output: "def add(a, b):\n    return a + b"
+
+  - name: raw_code_only
+    input:
+      response: "def multiply(x, y):\n    return x * y"
+    expected_output: "def multiply(x, y):\n    return x * y"
+
+  - name: empty_response
+    input:
+      response: ""
+    expected_output: ""
+
+  - name: no_code_response
+    input:
+      response: "I cannot help with that request."
+    expected_output: ""
+
+  - name: multiple_fence_blocks
+    input:
+      response: "First:\n```python\ndef first():\n    pass\n```\nSecond:\n```python\ndef second():\n    pass\n```"
+    expected_output: "def first():\n    pass"
+
+invariants:
+  - description: "Output never contains markdown fence markers at start/end"
+    check: "not output.startswith('```') and not output.endswith('```')"
+
+  - description: "Output is stripped of leading/trailing whitespace"
+    check: "output == output.strip()"

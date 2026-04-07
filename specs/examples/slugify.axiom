@@ -1,0 +1,132 @@
+axiom: "0.1"
+
+metadata:
+  name: slugify
+  version: "1.0.0"
+  description: "Converts a string to a URL-friendly slug"
+  target: "python:function"
+  tags:
+    - string
+    - url
+
+intent: |
+  Converts a string to a URL-friendly slug suitable for use in URLs.
+
+  Rules:
+  - Convert to lowercase
+  - Replace spaces with hyphens
+  - Remove all characters that are not alphanumeric, hyphens, or underscores
+  - Replace multiple consecutive hyphens with a single hyphen
+  - Strip leading and trailing hyphens
+  - Unicode characters should be preserved if alphanumeric (e.g., accented characters)
+
+  Returns an empty string if the input results in an empty slug after processing.
+
+  Does NOT transliterate unicode (café stays as café, not cafe).
+  Does NOT truncate the result.
+
+interface:
+  function_name: slugify
+  parameters:
+    - name: text
+      type: str
+      description: "The text to convert to a slug"
+      constraints: "any string"
+  returns:
+    type: str
+    description: "The URL-friendly slug"
+
+examples:
+  - name: simple_title
+    input:
+      text: "Hello World"
+    expected_output: "hello-world"
+
+  - name: already_slugified
+    input:
+      text: "hello-world"
+    expected_output: "hello-world"
+
+  - name: with_special_characters
+    input:
+      text: "Hello, World! How are you?"
+    expected_output: "hello-world-how-are-you"
+
+  - name: multiple_spaces
+    input:
+      text: "Hello   World"
+    expected_output: "hello-world"
+
+  - name: leading_trailing_spaces
+    input:
+      text: "  Hello World  "
+    expected_output: "hello-world"
+
+  - name: with_numbers
+    input:
+      text: "Article 123 Title"
+    expected_output: "article-123-title"
+
+  - name: with_underscores
+    input:
+      text: "hello_world"
+    expected_output: "hello_world"
+
+  - name: mixed_hyphens_underscores
+    input:
+      text: "hello-world_test"
+    expected_output: "hello-world_test"
+
+  - name: special_only
+    input:
+      text: "!@#$%^&*()"
+    expected_output: ""
+
+  - name: empty_string
+    input:
+      text: ""
+    expected_output: ""
+
+  - name: single_word
+    input:
+      text: "Hello"
+    expected_output: "hello"
+
+  - name: with_accented_characters
+    input:
+      text: "Café Münchën"
+    expected_output: "café-münchën"
+
+  - name: leading_hyphens_from_special
+    input:
+      text: "---Hello World---"
+    expected_output: "hello-world"
+
+  - name: consecutive_hyphens
+    input:
+      text: "Hello---World"
+    expected_output: "hello-world"
+
+  - name: only_spaces
+    input:
+      text: "     "
+    expected_output: ""
+
+invariants:
+  - description: "Output is always lowercase"
+    check: "output == output.lower()"
+
+  - description: "Output contains no spaces"
+    check: "' ' not in output"
+
+  - description: "Output has no leading hyphens"
+    check: "output == '' or not output.startswith('-')"
+
+  - description: "Output has no trailing hyphens"
+    check: "output == '' or not output.endswith('-')"
+
+  - description: "Output has no consecutive hyphens"
+    check: "'--' not in output"
+
+  - description: "Output contains only allowed characters"
+    check: "all(c.isalnum() or c in '-_' for c in output)"

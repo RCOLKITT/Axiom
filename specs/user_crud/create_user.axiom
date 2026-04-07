@@ -1,0 +1,106 @@
+axiom: "0.1"
+
+metadata:
+  name: create_user
+  version: "1.0.0"
+  description: Create a user with validated email and hashed password
+  target: python:function
+
+intent: |
+  Create a new user record with validated email and hashed password.
+
+  This function:
+  1. Validates the email using validate_email (dependency)
+  2. Hashes the password using hash_password (dependency)
+  3. Returns a user dict with id, name, email, and password_hash
+
+  Raises ValueError if email is invalid or password is empty.
+  The user ID is generated from the email using a simple hash.
+
+interface:
+  function_name: create_user
+  parameters:
+    - name: name
+      type: str
+      description: The user's display name
+    - name: email
+      type: str
+      description: The user's email address
+    - name: password
+      type: str
+      description: The user's password (will be hashed)
+  returns:
+    type: dict
+    description: A user record with id, name, email, and password_hash
+
+dependencies:
+  - name: validate_email
+    type: spec
+    interface:
+      function: "validate_email(email: str) -> bool"
+      description: "Validates email format"
+
+  - name: hash_password
+    type: spec
+    interface:
+      function: "hash_password(password: str) -> str"
+      description: "Returns SHA256 hex digest of password"
+
+examples:
+  - name: create_valid_user
+    input:
+      name: "John Doe"
+      email: "john@example.com"
+      password: "secret123"
+    expected_output:
+      name: "John Doe"
+      email: "john@example.com"
+
+  - name: create_another_user
+    input:
+      name: "Jane Smith"
+      email: "jane@example.org"
+      password: "mypassword"
+    expected_output:
+      name: "Jane Smith"
+      email: "jane@example.org"
+
+  - name: invalid_email
+    input:
+      name: "Bad User"
+      email: "notanemail"
+      password: "secret"
+    expected_output:
+      raises: ValueError
+      message_contains: "email"
+
+  - name: empty_password
+    input:
+      name: "Empty Pass"
+      email: "test@example.com"
+      password: ""
+    expected_output:
+      raises: ValueError
+      message_contains: "password"
+
+invariants:
+  - description: Output always contains name, email, password_hash, and id keys
+    check: |
+      result = create_user(name, email, password)
+      all(k in result for k in ["id", "name", "email", "password_hash"])
+    strategy:
+      type: hypothesis
+      generators:
+        name: text(min_size=1, max_size=50)
+        email: just("test@example.com")
+        password: text(min_size=1, max_size=50)
+
+  - description: Email in output matches input email
+    check: |
+      create_user(name, email, password)["email"] == email
+    strategy:
+      type: hypothesis
+      generators:
+        name: text(min_size=1, max_size=50)
+        email: just("user@example.com")
+        password: text(min_size=1, max_size=50)

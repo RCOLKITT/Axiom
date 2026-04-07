@@ -1,0 +1,88 @@
+axiom: "0.1"
+
+metadata:
+  name: format_duration
+  version: "1.0.0"
+  description: "Formats milliseconds into human-readable duration"
+  target: "python:function"
+  tags:
+    - formatting
+    - utility
+    - dogfood
+
+intent: |
+  Formats a duration in milliseconds into a human-readable string.
+
+  Formatting rules:
+  - Under 1 second: show as "Xms"
+  - 1-60 seconds: show as "X.Xs" (1 decimal)
+  - Over 60 seconds: show as "Xm Ys" (minutes and seconds)
+  - Over 60 minutes: show as "Xh Ym" (hours and minutes)
+
+  Always round to reasonable precision for display.
+
+interface:
+  function_name: format_duration
+  parameters:
+    - name: ms
+      type: int
+      description: "Duration in milliseconds"
+      constraints: "non-negative integer"
+  returns:
+    type: str
+    description: "Human-readable duration string"
+
+examples:
+  - name: milliseconds_only
+    input:
+      ms: 500
+    expected_output: "500ms"
+
+  - name: one_second
+    input:
+      ms: 1000
+    expected_output: "1.0s"
+
+  - name: seconds_with_decimal
+    input:
+      ms: 2500
+    expected_output: "2.5s"
+
+  - name: exactly_one_minute
+    input:
+      ms: 60000
+    expected_output: "1m 0s"
+
+  - name: one_minute_thirty_seconds
+    input:
+      ms: 90000
+    expected_output: "1m 30s"
+
+  - name: one_hour
+    input:
+      ms: 3600000
+    expected_output: "1h 0m"
+
+  - name: one_hour_thirty_minutes
+    input:
+      ms: 5400000
+    expected_output: "1h 30m"
+
+  - name: zero_milliseconds
+    input:
+      ms: 0
+    expected_output: "0ms"
+
+  - name: negative_raises
+    input:
+      ms: -100
+    expected_output:
+      raises: ValueError
+      message_contains: "negative"
+
+invariants:
+  - description: "Output is never empty"
+    check: "len(output) > 0"
+
+  - description: "Output contains a unit indicator"
+    check: "any(unit in output for unit in ['ms', 's', 'm', 'h'])"

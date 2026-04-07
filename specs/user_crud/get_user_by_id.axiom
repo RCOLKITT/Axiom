@@ -1,0 +1,77 @@
+axiom: "0.1"
+
+metadata:
+  name: get_user_by_id
+  version: "1.0.0"
+  description: Retrieve a user by their ID
+  target: python:function
+
+intent: |
+  Get a user from a users dictionary by their ID.
+
+  Takes a users dict (mapping user_id to user records) and a user_id.
+  Returns the user record if found.
+  Raises KeyError with descriptive message if user not found.
+
+interface:
+  function_name: get_user_by_id
+  parameters:
+    - name: users
+      type: dict
+      description: Dictionary mapping user IDs to user records
+    - name: user_id
+      type: str
+      description: The ID of the user to retrieve
+  returns:
+    type: dict
+    description: The user record
+
+examples:
+  - name: get_existing_user
+    input:
+      users:
+        "user_1": {"id": "user_1", "name": "John", "email": "john@example.com"}
+        "user_2": {"id": "user_2", "name": "Jane", "email": "jane@example.com"}
+      user_id: "user_1"
+    expected_output:
+      id: "user_1"
+      name: "John"
+      email: "john@example.com"
+
+  - name: get_another_user
+    input:
+      users:
+        "user_1": {"id": "user_1", "name": "John", "email": "john@example.com"}
+        "user_2": {"id": "user_2", "name": "Jane", "email": "jane@example.com"}
+      user_id: "user_2"
+    expected_output:
+      id: "user_2"
+      name: "Jane"
+      email: "jane@example.com"
+
+  - name: user_not_found
+    input:
+      users:
+        "user_1": {"id": "user_1", "name": "John", "email": "john@example.com"}
+      user_id: "user_999"
+    expected_output:
+      raises: KeyError
+      message_contains: "user_999"
+
+  - name: empty_users_dict
+    input:
+      users: {}
+      user_id: "any_id"
+    expected_output:
+      raises: KeyError
+      message_contains: "any_id"
+
+invariants:
+  - description: Returned user has the requested ID
+    check: |
+      get_user_by_id(users, user_id)["id"] == user_id
+    strategy:
+      type: hypothesis
+      generators:
+        users: 'just({"test_id": {"id": "test_id", "name": "Test"}})'
+        user_id: 'just("test_id")'

@@ -1,0 +1,99 @@
+axiom: "0.1"
+
+metadata:
+  name: create_user
+  version: "1.0.0"
+  description: "Create a new user via POST request"
+  target: "python:fastapi"
+  tags:
+    - api
+    - users
+    - phase2
+
+intent: |
+  Create a new user account. Accepts email and name in the request body.
+  Validates email format and ensures it's not already taken (simulated by
+  rejecting emails containing "taken"). Returns the created user with a
+  generated UUID.
+
+interface:
+  method: POST
+  path: "/api/users"
+  function_name: create_user
+  request_body:
+    fields:
+      - name: email
+        type: str
+        description: "User's email address"
+        constraints: "must be valid email format"
+      - name: name
+        type: str
+        description: "User's display name"
+        constraints: "non-empty"
+  response:
+    success:
+      status: 201
+      body:
+        id: str
+        email: str
+        name: str
+    errors:
+      - status: 400
+        when: "Email format is invalid"
+      - status: 409
+        when: "Email already exists (contains 'taken')"
+      - status: 422
+        when: "Name is empty"
+
+examples:
+  - name: valid_user
+    input:
+      email: "alice@example.com"
+      name: "Alice Smith"
+    expected_output:
+      email: "alice@example.com"
+      name: "Alice Smith"
+
+  - name: valid_user_minimal_name
+    input:
+      email: "bob@test.org"
+      name: "B"
+    expected_output:
+      email: "bob@test.org"
+      name: "B"
+
+  - name: invalid_email_no_at
+    input:
+      email: "invalid-email"
+      name: "Test User"
+    expected_output:
+      raises: ValueError
+      message_contains: "email"
+
+  - name: invalid_email_no_domain
+    input:
+      email: "user@"
+      name: "Test User"
+    expected_output:
+      raises: ValueError
+      message_contains: "email"
+
+  - name: email_already_taken
+    input:
+      email: "taken@example.com"
+      name: "New User"
+    expected_output:
+      raises: ValueError
+      message_contains: "already"
+
+  - name: empty_name
+    input:
+      email: "valid@example.com"
+      name: ""
+    expected_output:
+      raises: ValueError
+      message_contains: "name"
+
+constraints:
+  performance:
+    max_response_time_ms: 100

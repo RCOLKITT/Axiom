@@ -1,0 +1,97 @@
+axiom: "0.1"
+
+metadata:
+  name: is_close_value
+  version: "1.0.0"
+  description: "Detects if two values are approximately equal"
+  target: "python:function"
+  tags:
+    - verification
+    - comparison
+    - dogfood
+
+intent: |
+  Determines if an actual value is "close" to an expected value.
+  Used in verification failure analysis to detect near-misses.
+
+  Rules:
+  - Numeric values: Close if within 10% of expected (or < 0.1 for zero)
+  - Strings: Close if sequence similarity ratio > 0.8 (like Levenshtein)
+  - Other types: Never close (returns False)
+
+  This helps identify off-by-one errors, precision issues, and typos.
+
+interface:
+  function_name: is_close_value
+  parameters:
+    - name: expected
+      type: object
+      description: "The expected value"
+    - name: actual
+      type: object
+      description: "The actual value to compare"
+  returns:
+    type: bool
+    description: "True if values are approximately equal"
+
+examples:
+  - name: exact_number_match
+    input:
+      expected: 100
+      actual: 100
+    expected_output: true
+
+  - name: close_number_within_10_percent
+    input:
+      expected: 100
+      actual: 105
+    expected_output: true
+
+  - name: number_too_far
+    input:
+      expected: 100
+      actual: 150
+    expected_output: false
+
+  - name: zero_close_to_small
+    input:
+      expected: 0
+      actual: 0.05
+    expected_output: true
+
+  - name: zero_not_close_to_one
+    input:
+      expected: 0
+      actual: 1
+    expected_output: false
+
+  - name: similar_strings
+    input:
+      expected: "hello"
+      actual: "helo"
+    expected_output: true
+
+  - name: different_strings
+    input:
+      expected: "hello"
+      actual: "goodbye"
+    expected_output: false
+
+  - name: different_types_not_close
+    input:
+      expected: "42"
+      actual: 42
+    expected_output: false
+
+  - name: lists_never_close
+    input:
+      expected: [1, 2, 3]
+      actual: [1, 2, 4]
+    expected_output: false
+
+invariants:
+  - description: "Output is always a boolean"
+    check: "isinstance(output, bool)"
+
+  - description: "Identical values are always close"
+    check: "True"

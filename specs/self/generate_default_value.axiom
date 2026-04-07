@@ -1,0 +1,101 @@
+axiom: "0.1"
+
+metadata:
+  name: generate_default_value
+  version: "1.0.0"
+  description: "Generates placeholder default values based on type"
+  target: "python:function"
+  tags:
+    - lint
+    - autofix
+    - dogfood
+
+intent: |
+  Generates a sensible default placeholder value for a given type string.
+  Used by the lint auto-fixer to add missing examples to specs.
+
+  Type mapping:
+  - str/string -> "example"
+  - int/integer -> 42
+  - float -> 3.14
+  - bool/boolean -> True
+  - list -> ["item1", "item2"]
+  - dict -> {"key": "value"}
+  - None or unknown -> "example"
+
+  Case insensitive matching on type names.
+
+interface:
+  function_name: generate_default_value
+  parameters:
+    - name: type_str
+      type: str | None
+      description: "The type string (e.g., 'str', 'int', 'list')"
+  returns:
+    type: object
+    description: "A default value appropriate for that type"
+
+examples:
+  - name: string_type
+    input:
+      type_str: "str"
+    expected_output: "example"
+
+  - name: string_type_full
+    input:
+      type_str: "string"
+    expected_output: "example"
+
+  - name: int_type
+    input:
+      type_str: "int"
+    expected_output: 42
+
+  - name: integer_type
+    input:
+      type_str: "integer"
+    expected_output: 42
+
+  - name: float_type
+    input:
+      type_str: "float"
+    expected_output: 3.14
+
+  - name: bool_type
+    input:
+      type_str: "bool"
+    expected_output: true
+
+  - name: boolean_type
+    input:
+      type_str: "boolean"
+    expected_output: true
+
+  - name: list_type
+    input:
+      type_str: "list"
+    expected_output: ["item1", "item2"]
+
+  - name: dict_type
+    input:
+      type_str: "dict"
+    expected_output: {"key": "value"}
+
+  - name: none_type
+    input:
+      type_str: null
+    expected_output: "example"
+
+  - name: unknown_type
+    input:
+      type_str: "CustomClass"
+    expected_output: "example"
+
+  - name: case_insensitive
+    input:
+      type_str: "STR"
+    expected_output: "example"
+
+invariants:
+  - description: "Output is never None"
+    check: "output is not None"

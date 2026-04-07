@@ -1,0 +1,137 @@
+axiom: "0.1"
+
+metadata:
+  name: validate_email
+  version: "1.0.0"
+  description: "Validates and normalizes email addresses"
+  target: "python:function"
+  tags:
+    - validation
+    - string
+
+intent: |
+  Takes a string that should be an email address.
+  Validates format using these rules:
+  - Must contain exactly one @ symbol
+  - Must have non-empty local part (before @)
+  - Must have a valid domain (after @) with at least one dot
+  - Domain must have at least 2 characters after the last dot (TLD)
+  - No spaces allowed anywhere in the email
+
+  If valid, returns the email lowercased and stripped of leading/trailing whitespace.
+  If invalid, raises ValueError with a descriptive message explaining what's wrong.
+
+  Does NOT perform DNS validation or check if the email actually exists.
+  This is purely format validation.
+
+interface:
+  function_name: validate_email
+  parameters:
+    - name: email
+      type: str
+      description: "The email address to validate"
+      constraints: "any string"
+  returns:
+    type: str
+    description: "The validated, normalized (lowercased, stripped) email address"
+
+examples:
+  - name: basic_valid_email
+    input:
+      email: "User@Example.com"
+    expected_output: "user@example.com"
+
+  - name: valid_with_leading_whitespace
+    input:
+      email: "  hello@world.com"
+    expected_output: "hello@world.com"
+
+  - name: valid_with_trailing_whitespace
+    input:
+      email: "hello@world.com  "
+    expected_output: "hello@world.com"
+
+  - name: valid_with_subdomain
+    input:
+      email: "user@mail.example.com"
+    expected_output: "user@mail.example.com"
+
+  - name: valid_with_plus_addressing
+    input:
+      email: "user+tag@example.com"
+    expected_output: "user+tag@example.com"
+
+  - name: valid_with_dots_in_local
+    input:
+      email: "first.last@example.com"
+    expected_output: "first.last@example.com"
+
+  - name: missing_at_sign
+    input:
+      email: "notanemail"
+    expected_output:
+      raises: ValueError
+      message_contains: "@"
+
+  - name: multiple_at_signs
+    input:
+      email: "user@@example.com"
+    expected_output:
+      raises: ValueError
+      message_contains: "@"
+
+  - name: empty_string
+    input:
+      email: ""
+    expected_output:
+      raises: ValueError
+
+  - name: only_whitespace
+    input:
+      email: "   "
+    expected_output:
+      raises: ValueError
+
+  - name: space_in_middle
+    input:
+      email: "user @example.com"
+    expected_output:
+      raises: ValueError
+      message_contains: "space"
+
+  - name: missing_domain
+    input:
+      email: "user@"
+    expected_output:
+      raises: ValueError
+
+  - name: missing_local_part
+    input:
+      email: "@example.com"
+    expected_output:
+      raises: ValueError
+
+  - name: missing_tld
+    input:
+      email: "user@example"
+    expected_output:
+      raises: ValueError
+
+  - name: short_tld
+    input:
+      email: "user@example.c"
+    expected_output:
+      raises: ValueError
+
+invariants:
+  - description: "Output is always lowercase"
+    check: "output == output.lower()"
+
+  - description: "Output contains exactly one @ symbol"
+    check: "output.count('@') == 1"
+
+  - description: "Output has no leading or trailing whitespace"
+    check: "output == output.strip()"
+
+  - description: "Output contains no spaces"
+    check: "' ' not in output"

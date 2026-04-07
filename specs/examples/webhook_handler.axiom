@@ -1,0 +1,134 @@
+axiom: "0.1"
+
+metadata:
+  name: webhook_handler
+  version: "1.0.0"
+  description: "Handle incoming webhooks with event processing"
+  target: "python:fastapi"
+  tags:
+    - api
+    - webhooks
+    - phase2
+
+intent: |
+  Handle incoming webhook events from external services. Accepts POST
+  requests with JSON body containing event_type and payload. Validates
+  the event_type is one of the supported types and returns an acknowledgment
+  with the event processing status.
+
+  Supported event types:
+  - user.created: Process new user creation
+  - user.updated: Process user update
+  - payment.completed: Process payment completion
+  - payment.failed: Process payment failure
+
+  Unknown event types should return a 400 error.
+
+interface:
+  method: POST
+  path: "/api/webhooks"
+  function_name: handle_webhook
+  request_body:
+    fields:
+      - name: event_type
+        type: str
+        description: "Type of webhook event"
+        constraints: "must be a supported event type"
+      - name: payload
+        type: dict
+        description: "Event payload data"
+      - name: timestamp
+        type: str
+        description: "Event timestamp (ISO format)"
+        required: false
+  response:
+    success:
+      status: 200
+      body:
+        received: bool
+        event_type: str
+        status: str
+    errors:
+      - status: 400
+        when: "event_type is not supported"
+      - status: 422
+        when: "payload is missing required fields"
+
+examples:
+  - name: user_created_event
+    input:
+      event_type: "user.created"
+      payload:
+        user_id: "123"
+        email: "new@example.com"
+    expected_output:
+      received: true
+      event_type: "user.created"
+      status: "processed"
+
+  - name: user_updated_event
+    input:
+      event_type: "user.updated"
+      payload:
+        user_id: "123"
+        changes:
+          name: "New Name"
+    expected_output:
+      received: true
+      event_type: "user.updated"
+      status: "processed"
+
+  - name: payment_completed_event
+    input:
+      event_type: "payment.completed"
+      payload:
+        payment_id: "pay_123"
+        amount: 99.99
+    expected_output:
+      received: true
+      event_type: "payment.completed"
+      status: "processed"
+
+  - name: payment_failed_event
+    input:
+      event_type: "payment.failed"
+      payload:
+        payment_id: "pay_456"
+        error: "insufficient_funds"
+    expected_output:
+      received: true
+      event_type: "payment.failed"
+      status: "processed"
+
+  - name: event_with_timestamp
+    input:
+      event_type: "user.created"
+      payload:
+        user_id: "789"
+      timestamp: "2024-01-15T10:30:00Z"
+    expected_output:
+      received: true
+      event_type: "user.created"
+      status: "processed"
+
+  - name: unsupported_event_type
+    input:
+      event_type: "unknown.event"
+      payload:
+        data: "test"
+    expected_output:
+      raises: ValueError
+      message_contains: "unsupported"
+
+  - name: invalid_event_type_format
+    input:
+      event_type: "invalid"
+      payload:
+        data: "test"
+    expected_output:
+      raises: ValueError
+      message_contains: "event"
+
+constraints:
+  performance:
+    max_response_time_ms: 50

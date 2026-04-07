@@ -1,0 +1,87 @@
+axiom: "0.1"
+
+metadata:
+  name: format_value
+  version: "1.0.0"
+  description: "Formats values for human-readable display"
+  target: "python:function"
+  tags:
+    - formatting
+    - display
+    - dogfood
+
+intent: |
+  Formats a Python value for human-readable display in verification output.
+
+  Rules:
+  - None values display as "None"
+  - Strings are quoted and truncated to max 50 chars total (including quotes and "...")
+  - Large dicts (over 80 chars when stringified) show "{N keys}" summary
+  - Large lists (over 5 items) show "[N items]" summary
+  - Numbers and other types use their default string representation
+
+  This is used in interactive verification failure messages to show
+  expected vs actual values clearly.
+
+interface:
+  function_name: format_value
+  parameters:
+    - name: value
+      type: object
+      description: "Any Python value to format"
+  returns:
+    type: str
+    description: "Human-readable string representation"
+
+examples:
+  - name: format_none
+    input:
+      value: null
+    expected_output: "None"
+
+  - name: format_short_string
+    input:
+      value: "hello"
+    expected_output: '"hello"'
+
+  - name: format_long_string
+    input:
+      value: "This is a very long string that exceeds fifty characters in length"
+    expected_output: '"This is a very long string that exceeds fifty..."'
+
+  - name: format_small_dict
+    input:
+      value: {"a": 1, "b": 2}
+    expected_output: "{'a': 1, 'b': 2}"
+
+  - name: format_small_list
+    input:
+      value: [1, 2, 3]
+    expected_output: "[1, 2, 3]"
+
+  - name: format_large_list
+    input:
+      value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    expected_output: "[10 items]"
+
+  - name: format_integer
+    input:
+      value: 42
+    expected_output: "42"
+
+  - name: format_float
+    input:
+      value: 3.14159
+    expected_output: "3.14159"
+
+  - name: format_boolean
+    input:
+      value: true
+    expected_output: "True"
+
+invariants:
+  - description: "Output is always a non-empty string"
+    check: "isinstance(output, str) and len(output) > 0"
+
+  - description: "String outputs are always quoted"
+    check: "not isinstance(input.get('value'), str) or (output.startswith('\"') and output.endswith('\"'))"
