@@ -124,6 +124,7 @@ module = [
     "lsprotocol.*",
     "watchdog.*",
     "z3.*",
+    "generated.*",
 ]
 ignore_missing_imports = true
 

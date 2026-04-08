@@ -60,5 +60,6 @@ jobs:
 
       - name: Check package contents
         run: |
-          uv pip install dist/*.whl --system
-          axiom --help
+          uv venv .test-venv
+          VIRTUAL_ENV=.test-venv uv pip install dist/*.whl
+          .test-venv/bin/axiom --help
