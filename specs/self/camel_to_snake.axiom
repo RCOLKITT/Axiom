@@ -1,0 +1,74 @@
+axiom: "0.1"
+
+metadata:
+  name: camel_to_snake
+  version: "1.0.0"
+  description: "Convert camelCase to snake_case"
+  target: "python:function"
+
+intent: |
+  Convert a camelCase or PascalCase string to snake_case.
+  Handles acronyms and consecutive uppercase letters correctly.
+
+interface:
+  function_name: camel_to_snake
+  parameters:
+    - name: name
+      type: str
+      description: "The camelCase or PascalCase string"
+  returns:
+    type: str
+    description: "The snake_case string"
+
+examples:
+  - name: simple_camel
+    input:
+      name: "camelCase"
+    expected_output: "camel_case"
+
+  - name: pascal_case
+    input:
+      name: "PascalCase"
+    expected_output: "pascal_case"
+
+  - name: already_snake
+    input:
+      name: "snake_case"
+    expected_output: "snake_case"
+
+  - name: all_caps
+    input:
+      name: "HTTPServer"
+    expected_output: "http_server"
+
+  - name: mixed_acronym
+    input:
+      name: "XMLHttpRequest"
+    expected_output: "xml_http_request"
+
+  - name: single_word
+    input:
+      name: "word"
+    expected_output: "word"
+
+  - name: single_letter
+    input:
+      name: "a"
+    expected_output: "a"
+
+  - name: numbers
+    input:
+      name: "html5Parser"
+    expected_output: "html5_parser"
+
+  - name: empty_string
+    input:
+      name: ""
+    expected_output: ""
+
+invariants:
+  - description: "Output is lowercase"
+    check: "output == output.lower()"
+
+  - description: "No consecutive underscores"
+    check: "'__' not in output"

@@ -1,0 +1,80 @@
+axiom: "0.1"
+
+metadata:
+  name: parse_function_signature
+  version: "1.0.0"
+  description: "Parse a Python function signature string"
+  target: "python:function"
+
+intent: |
+  Parse a Python function signature string and extract the function name,
+  parameters with their types, and return type. Returns a structured
+  dictionary with the parsed components.
+
+interface:
+  function_name: parse_function_signature
+  parameters:
+    - name: signature
+      type: str
+      description: "The function signature string"
+  returns:
+    type: "dict[str, Any]"
+    description: "Parsed signature with name, params, and return_type"
+
+examples:
+  - name: simple_function
+    input:
+      signature: "def add(a: int, b: int) -> int"
+    expected_output:
+      name: "add"
+      params:
+        - {name: "a", type: "int"}
+        - {name: "b", type: "int"}
+      return_type: "int"
+
+  - name: no_types
+    input:
+      signature: "def greet(name)"
+    expected_output:
+      name: "greet"
+      params:
+        - {name: "name", type: null}
+      return_type: null
+
+  - name: no_params
+    input:
+      signature: "def get_time() -> str"
+    expected_output:
+      name: "get_time"
+      params: []
+      return_type: "str"
+
+  - name: complex_types
+    input:
+      signature: "def process(items: list[str], count: int = 10) -> dict[str, int]"
+    expected_output:
+      name: "process"
+      params:
+        - {name: "items", type: "list[str]"}
+        - {name: "count", type: "int", default: "10"}
+      return_type: "dict[str, int]"
+
+  - name: async_function
+    input:
+      signature: "async def fetch(url: str) -> str"
+    expected_output:
+      name: "fetch"
+      params:
+        - {name: "url", type: "str"}
+      return_type: "str"
+      is_async: true
+
+invariants:
+  - description: "Always returns a dict"
+    check: "isinstance(output, dict)"
+
+  - description: "Always has name field"
+    check: "'name' in output"
+
+  - description: "Params is always a list"
+    check: "isinstance(output.get('params', []), list)"

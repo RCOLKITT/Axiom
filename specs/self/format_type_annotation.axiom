@@ -1,0 +1,66 @@
+axiom: "0.1"
+
+metadata:
+  name: format_type_annotation
+  version: "1.0.0"
+  description: "Format a type annotation for display"
+  target: "python:function"
+
+intent: |
+  Format a Python type annotation for display in documentation or prompts.
+  Handles Optional, Union, generic types, and adds proper spacing.
+
+interface:
+  function_name: format_type_annotation
+  parameters:
+    - name: type_str
+      type: str
+      description: "The type annotation string"
+    - name: verbose
+      type: bool
+      description: "Use verbose form (Optional instead of |)"
+      default: false
+  returns:
+    type: str
+    description: "Formatted type annotation"
+
+examples:
+  - name: simple_type
+    input:
+      type_str: "str"
+      verbose: false
+    expected_output: "str"
+
+  - name: optional_compact
+    input:
+      type_str: "str | None"
+      verbose: false
+    expected_output: "str | None"
+
+  - name: optional_verbose
+    input:
+      type_str: "str | None"
+      verbose: true
+    expected_output: "Optional[str]"
+
+  - name: list_type
+    input:
+      type_str: "list[int]"
+      verbose: false
+    expected_output: "list[int]"
+
+  - name: dict_type
+    input:
+      type_str: "dict[str,int]"
+      verbose: false
+    expected_output: "dict[str, int]"
+
+  - name: complex_union
+    input:
+      type_str: "int | str | None"
+      verbose: true
+    expected_output: "Optional[Union[int, str]]"
+
+invariants:
+  - description: "Output is non-empty for non-empty input"
+    check: "len(output) > 0 if input['type_str'] else True"

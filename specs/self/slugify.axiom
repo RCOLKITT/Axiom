@@ -1,0 +1,78 @@
+axiom: "0.1"
+
+metadata:
+  name: slugify
+  version: "1.0.0"
+  description: "Convert text to URL-safe slug"
+  target: "python:function"
+
+intent: |
+  Convert arbitrary text to a URL-safe slug.
+  Converts to lowercase, replaces spaces and special characters with hyphens,
+  removes non-alphanumeric characters, and collapses multiple hyphens.
+
+interface:
+  function_name: slugify
+  parameters:
+    - name: text
+      type: str
+      description: "The text to slugify"
+  returns:
+    type: str
+    description: "URL-safe slug"
+
+examples:
+  - name: simple_text
+    input:
+      text: "Hello World"
+    expected_output: "hello-world"
+
+  - name: special_chars
+    input:
+      text: "Hello, World!"
+    expected_output: "hello-world"
+
+  - name: multiple_spaces
+    input:
+      text: "Hello    World"
+    expected_output: "hello-world"
+
+  - name: leading_trailing_spaces
+    input:
+      text: "  Hello World  "
+    expected_output: "hello-world"
+
+  - name: already_slug
+    input:
+      text: "already-a-slug"
+    expected_output: "already-a-slug"
+
+  - name: numbers
+    input:
+      text: "Product 123"
+    expected_output: "product-123"
+
+  - name: unicode
+    input:
+      text: "Café Résumé"
+    expected_output: "cafe-resume"
+
+  - name: empty_string
+    input:
+      text: ""
+    expected_output: ""
+
+  - name: only_special_chars
+    input:
+      text: "!@#$%"
+    expected_output: ""
+
+invariants:
+  - description: "Only lowercase alphanumeric and hyphens"
+    check: "all(c.isalnum() or c == '-' for c in output)"
+
+  - description: "No consecutive hyphens"
+    check: "'--' not in output"
+
+  - description: "No leading or trailing hyphens"
+    check: "not output.startswith('-') and not output.endswith('-') if output else True"

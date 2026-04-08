@@ -1,0 +1,64 @@
+axiom: "0.1"
+
+metadata:
+  name: strip_ansi
+  version: "1.0.0"
+  description: "Remove ANSI escape sequences from text"
+  target: "python:function"
+
+intent: |
+  Remove all ANSI escape sequences from text, leaving only the plain text.
+  This handles color codes, cursor movement, and other terminal sequences.
+
+interface:
+  function_name: strip_ansi
+  parameters:
+    - name: text
+      type: str
+      description: "Text potentially containing ANSI codes"
+  returns:
+    type: str
+    description: "Plain text without ANSI codes"
+
+examples:
+  - name: no_ansi
+    input:
+      text: "plain text"
+    expected_output: "plain text"
+
+  - name: red_text
+    input:
+      text: "\x1b[31mred text\x1b[0m"
+    expected_output: "red text"
+
+  - name: bold_text
+    input:
+      text: "\x1b[1mbold\x1b[0m"
+    expected_output: "bold"
+
+  - name: multiple_codes
+    input:
+      text: "\x1b[32m✓\x1b[0m \x1b[1mtest\x1b[0m passed"
+    expected_output: "✓ test passed"
+
+  - name: cursor_movement
+    input:
+      text: "\x1b[2Jhello"
+    expected_output: "hello"
+
+  - name: empty_string
+    input:
+      text: ""
+    expected_output: ""
+
+  - name: only_ansi
+    input:
+      text: "\x1b[31m\x1b[0m"
+    expected_output: ""
+
+invariants:
+  - description: "No ANSI escape sequences in output"
+    check: "'\\x1b' not in output and '\\033' not in output"
+
+  - description: "Output length <= input length"
+    check: "len(output) <= len(input['text'])"

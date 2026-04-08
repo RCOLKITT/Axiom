@@ -31,6 +31,7 @@ from axiom.cli.lsp_cmd import lsp
 from axiom.cli.new_cmd import new
 from axiom.cli.prove_cmd import prove
 from axiom.cli.provenance_cmd import provenance
+from axiom.cli.score_cmd import score_command
 from axiom.cli.stats_cmd import stats
 from axiom.cli.sync_cmd import sync
 from axiom.cli.verify_cmd import verify
@@ -117,6 +118,7 @@ cli.add_command(sync)
 cli.add_command(doctor)
 cli.add_command(stats)
 cli.add_command(explain)
+cli.add_command(score_command, name="score")
 
 
 def main() -> None:

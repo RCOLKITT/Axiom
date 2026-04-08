@@ -1,0 +1,69 @@
+axiom: "0.1"
+
+metadata:
+  name: extract_urls
+  version: "1.0.0"
+  description: "Extract all URLs from text"
+  target: "python:function"
+
+intent: |
+  Extract all URLs from arbitrary text. Handles http, https, and ftp protocols.
+  Returns unique URLs in order of first appearance.
+
+interface:
+  function_name: extract_urls
+  parameters:
+    - name: text
+      type: str
+      description: "Text to extract URLs from"
+  returns:
+    type: "list[str]"
+    description: "List of unique URLs found"
+
+examples:
+  - name: single_url
+    input:
+      text: "Visit https://example.com for more info"
+    expected_output: ["https://example.com"]
+
+  - name: multiple_urls
+    input:
+      text: "Check http://foo.com and https://bar.com"
+    expected_output: ["http://foo.com", "https://bar.com"]
+
+  - name: no_urls
+    input:
+      text: "This text has no URLs"
+    expected_output: []
+
+  - name: url_with_path
+    input:
+      text: "See https://example.com/path/to/page.html"
+    expected_output: ["https://example.com/path/to/page.html"]
+
+  - name: url_with_query
+    input:
+      text: "Link: https://api.example.com/search?q=test"
+    expected_output: ["https://api.example.com/search?q=test"]
+
+  - name: duplicate_urls
+    input:
+      text: "Visit https://example.com twice: https://example.com"
+    expected_output: ["https://example.com"]
+
+  - name: ftp_url
+    input:
+      text: "Download from ftp://files.example.com/file.zip"
+    expected_output: ["ftp://files.example.com/file.zip"]
+
+  - name: empty_text
+    input:
+      text: ""
+    expected_output: []
+
+invariants:
+  - description: "All results are valid URLs"
+    check: "all(url.startswith(('http://', 'https://', 'ftp://')) for url in output)"
+
+  - description: "No duplicates"
+    check: "len(output) == len(set(output))"

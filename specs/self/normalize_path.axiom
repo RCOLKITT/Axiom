@@ -1,0 +1,70 @@
+axiom: "0.1"
+
+metadata:
+  name: normalize_path
+  version: "1.0.0"
+  description: "Normalize a file path string"
+  target: "python:function"
+
+intent: |
+  Normalize a file path by resolving . and .. components,
+  converting backslashes to forward slashes, and removing
+  redundant separators.
+
+interface:
+  function_name: normalize_path
+  parameters:
+    - name: path
+      type: str
+      description: "The path to normalize"
+  returns:
+    type: str
+    description: "Normalized path"
+
+examples:
+  - name: simple_path
+    input:
+      path: "/home/user/file.txt"
+    expected_output: "/home/user/file.txt"
+
+  - name: with_dots
+    input:
+      path: "/home/user/../other/./file.txt"
+    expected_output: "/home/other/file.txt"
+
+  - name: double_slashes
+    input:
+      path: "/home//user///file.txt"
+    expected_output: "/home/user/file.txt"
+
+  - name: backslashes
+    input:
+      path: "C:\\Users\\Name\\file.txt"
+    expected_output: "C:/Users/Name/file.txt"
+
+  - name: relative_path
+    input:
+      path: "folder/../other/file.txt"
+    expected_output: "other/file.txt"
+
+  - name: trailing_slash
+    input:
+      path: "/home/user/"
+    expected_output: "/home/user"
+
+  - name: current_dir
+    input:
+      path: "."
+    expected_output: "."
+
+  - name: empty_path
+    input:
+      path: ""
+    expected_output: ""
+
+invariants:
+  - description: "No double slashes"
+    check: "'//' not in output"
+
+  - description: "No backslashes"
+    check: "'\\\\' not in output"

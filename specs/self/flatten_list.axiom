@@ -1,0 +1,64 @@
+axiom: "0.1"
+
+metadata:
+  name: flatten_list
+  version: "1.0.0"
+  description: "Flatten nested lists to single level"
+  target: "python:function"
+
+intent: |
+  Flatten a nested list structure to a single-level list.
+  Handles arbitrary nesting depth. Preserves order.
+
+interface:
+  function_name: flatten_list
+  parameters:
+    - name: nested
+      type: "list[Any]"
+      description: "The nested list to flatten"
+  returns:
+    type: "list[Any]"
+    description: "Flattened list"
+
+examples:
+  - name: already_flat
+    input:
+      nested: [1, 2, 3]
+    expected_output: [1, 2, 3]
+
+  - name: one_level
+    input:
+      nested: [[1, 2], [3, 4]]
+    expected_output: [1, 2, 3, 4]
+
+  - name: mixed_nesting
+    input:
+      nested: [1, [2, 3], [[4, 5]]]
+    expected_output: [1, 2, 3, 4, 5]
+
+  - name: deep_nesting
+    input:
+      nested: [[[[1]]]]
+    expected_output: [1]
+
+  - name: empty_list
+    input:
+      nested: []
+    expected_output: []
+
+  - name: with_empty_sublists
+    input:
+      nested: [1, [], 2, [3, []]]
+    expected_output: [1, 2, 3]
+
+  - name: strings_not_flattened
+    input:
+      nested: ["hello", ["world"]]
+    expected_output: ["hello", "world"]
+
+invariants:
+  - description: "No nested lists in output"
+    check: "not any(isinstance(x, list) for x in output)"
+
+  - description: "Empty input gives empty output"
+    check: "output == [] if input['nested'] == [] else True"

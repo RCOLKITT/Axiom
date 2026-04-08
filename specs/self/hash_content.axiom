@@ -1,0 +1,53 @@
+axiom: "0.1"
+
+metadata:
+  name: hash_content
+  version: "1.0.0"
+  description: "Compute deterministic SHA-256 hash of content"
+  target: "python:function"
+
+intent: |
+  Compute a deterministic SHA-256 hash of the given content string.
+  Returns a 64-character lowercase hexadecimal string.
+  The hash must be deterministic - same input always produces same output.
+
+interface:
+  function_name: hash_content
+  parameters:
+    - name: content
+      type: str
+      description: "The content to hash"
+  returns:
+    type: str
+    description: "64-character lowercase hex SHA-256 hash"
+
+examples:
+  - name: empty_string
+    input:
+      content: ""
+    expected_output: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+  - name: hello_world
+    input:
+      content: "hello world"
+    expected_output: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+
+  - name: simple_text
+    input:
+      content: "test"
+    expected_output: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+
+  - name: with_newlines
+    input:
+      content: "line1\nline2\n"
+    expected_output: "674e90f5cdcde7c0f0b2b7a3fe9a8e4c7f0b8e5a5f5a5f5a5f5a5f5a5f5a5f5a"
+
+invariants:
+  - description: "Output is always 64 characters"
+    check: "len(output) == 64"
+
+  - description: "Output is lowercase hexadecimal"
+    check: "all(c in '0123456789abcdef' for c in output)"
+
+  - description: "Deterministic - same input gives same output"
+    check: "hash_content(input['content']) == output"

@@ -15,6 +15,8 @@ from axiom.verify.http_runner import run_http_examples
 from axiom.verify.models import CheckStatus, VerificationResult
 from axiom.verify.performance_runner import run_performance_tests
 from axiom.verify.property_runner import run_invariants
+from axiom.verify.typescript_property import run_typescript_invariants
+from axiom.verify.typescript_runner import run_typescript_examples
 
 if TYPE_CHECKING:
     from axiom.config.settings import Settings
@@ -33,9 +35,11 @@ def verify_spec(
     1. Example-based tests
     2. Property-based invariant tests
 
+    Supports Python and TypeScript targets.
+
     Args:
         spec: The parsed spec.
-        code: The generated Python code.
+        code: The generated code.
         settings: Axiom settings.
 
     Returns:
@@ -43,7 +47,11 @@ def verify_spec(
     """
     start_time = time.time()
 
-    logger.info("Starting verification", spec=spec.spec_name)
+    # Detect target language
+    target = spec.metadata.target
+    language = target.split(":")[0].lower() if target else "python"
+
+    logger.info("Starting verification", spec=spec.spec_name, language=language)
 
     example_results = []
     invariant_results = []
@@ -51,26 +59,35 @@ def verify_spec(
 
     # Run examples
     if settings.verification.run_examples:
-        # Get generated directory for dependency imports
-        generated_dir = settings.get_generated_dir()
-
-        if spec.is_fastapi:
+        if language == "typescript":
+            logger.debug("Running TypeScript examples")
+            example_results = run_typescript_examples(code, spec)
+        elif spec.is_fastapi:
             logger.debug("Running HTTP examples")
             example_results = run_http_examples(spec, code)
         else:
-            logger.debug("Running examples")
+            logger.debug("Running Python examples")
+            generated_dir = settings.get_generated_dir()
             example_results = run_examples(spec, code, generated_dir)
     else:
         logger.debug("Examples disabled")
 
-    # Run invariants (only for function specs, FastAPI invariants would need different handling)
+    # Run invariants
     if settings.verification.run_invariants and not spec.is_fastapi:
-        logger.debug("Running invariants")
-        invariant_results = run_invariants(
-            spec,
-            code,
-            max_examples=settings.verification.hypothesis_max_examples,
-        )
+        if language == "typescript":
+            logger.debug("Running TypeScript invariants")
+            invariant_results = run_typescript_invariants(
+                code,
+                spec,
+                test_count=settings.verification.hypothesis_max_examples,
+            )
+        else:
+            logger.debug("Running Python invariants")
+            invariant_results = run_invariants(
+                spec,
+                code,
+                max_examples=settings.verification.hypothesis_max_examples,
+            )
     else:
         logger.debug("Invariants disabled or not applicable")
 

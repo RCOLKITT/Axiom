@@ -1,0 +1,78 @@
+axiom: "0.1"
+
+metadata:
+  name: parse_json_safely
+  version: "1.0.0"
+  description: "Parse JSON with default value on failure"
+  target: "python:function"
+
+intent: |
+  Parse a JSON string, returning a default value if parsing fails.
+  Never raises an exception. Useful for handling potentially invalid JSON.
+
+interface:
+  function_name: parse_json_safely
+  parameters:
+    - name: text
+      type: str
+      description: "The JSON string to parse"
+    - name: default
+      type: Any
+      description: "Default value if parsing fails"
+      default: null
+  returns:
+    type: Any
+    description: "Parsed value or default"
+
+examples:
+  - name: valid_object
+    input:
+      text: '{"key": "value"}'
+      default: null
+    expected_output: {"key": "value"}
+
+  - name: valid_array
+    input:
+      text: "[1, 2, 3]"
+      default: []
+    expected_output: [1, 2, 3]
+
+  - name: valid_number
+    input:
+      text: "42"
+      default: 0
+    expected_output: 42
+
+  - name: valid_string
+    input:
+      text: '"hello"'
+      default: ""
+    expected_output: "hello"
+
+  - name: invalid_json
+    input:
+      text: "not json"
+      default: {}
+    expected_output: {}
+
+  - name: empty_string
+    input:
+      text: ""
+      default: null
+    expected_output: null
+
+  - name: malformed_object
+    input:
+      text: '{"key": }'
+      default: {"error": true}
+    expected_output: {"error": true}
+
+  - name: valid_null
+    input:
+      text: "null"
+      default: "default"
+    expected_output: null
+
+invariants:
+  - description: "Never raises exception"
+    check: "True"

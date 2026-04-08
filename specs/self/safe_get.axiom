@@ -1,0 +1,83 @@
+axiom: "0.1"
+
+metadata:
+  name: safe_get
+  version: "1.0.0"
+  description: "Safely get nested dictionary value with default"
+  target: "python:function"
+
+intent: |
+  Get a value from a nested dictionary using dot-notation path.
+  Returns default if any key in the path doesn't exist.
+  Never raises KeyError.
+
+interface:
+  function_name: safe_get
+  parameters:
+    - name: data
+      type: "dict[str, Any]"
+      description: "The dictionary to search"
+    - name: path
+      type: str
+      description: "Dot-separated key path"
+    - name: default
+      type: Any
+      description: "Default value if path not found"
+      default: null
+  returns:
+    type: Any
+    description: "Value at path or default"
+
+examples:
+  - name: simple_key
+    input:
+      data: {"key": "value"}
+      path: "key"
+      default: null
+    expected_output: "value"
+
+  - name: nested_key
+    input:
+      data: {"outer": {"inner": "value"}}
+      path: "outer.inner"
+      default: null
+    expected_output: "value"
+
+  - name: missing_key
+    input:
+      data: {"key": "value"}
+      path: "missing"
+      default: "default"
+    expected_output: "default"
+
+  - name: missing_nested
+    input:
+      data: {"outer": {}}
+      path: "outer.missing"
+      default: 0
+    expected_output: 0
+
+  - name: deep_nesting
+    input:
+      data: {"a": {"b": {"c": {"d": 42}}}}
+      path: "a.b.c.d"
+      default: null
+    expected_output: 42
+
+  - name: empty_path
+    input:
+      data: {"key": "value"}
+      path: ""
+      default: "default"
+    expected_output: "default"
+
+  - name: empty_dict
+    input:
+      data: {}
+      path: "any.path"
+      default: "default"
+    expected_output: "default"
+
+invariants:
+  - description: "Never raises KeyError"
+    check: "True"

@@ -1,0 +1,79 @@
+axiom: "0.1"
+
+metadata:
+  name: truncate_string
+  version: "1.0.0"
+  description: "Truncate string to maximum length with ellipsis"
+  target: "python:function"
+
+intent: |
+  Truncate a string to a maximum length, adding ellipsis if truncated.
+  The ellipsis is included in the max_length count. If the string is
+  shorter than max_length, return it unchanged.
+
+interface:
+  function_name: truncate_string
+  parameters:
+    - name: text
+      type: str
+      description: "The string to truncate"
+    - name: max_length
+      type: int
+      description: "Maximum length including ellipsis"
+    - name: ellipsis
+      type: str
+      description: "Ellipsis string to append"
+      default: "..."
+  returns:
+    type: str
+    description: "Truncated string"
+
+examples:
+  - name: no_truncation
+    input:
+      text: "hello"
+      max_length: 10
+      ellipsis: "..."
+    expected_output: "hello"
+
+  - name: simple_truncation
+    input:
+      text: "hello world"
+      max_length: 8
+      ellipsis: "..."
+    expected_output: "hello..."
+
+  - name: exact_fit
+    input:
+      text: "hello"
+      max_length: 5
+      ellipsis: "..."
+    expected_output: "hello"
+
+  - name: custom_ellipsis
+    input:
+      text: "hello world"
+      max_length: 10
+      ellipsis: "…"
+    expected_output: "hello wor…"
+
+  - name: very_short
+    input:
+      text: "hello world"
+      max_length: 4
+      ellipsis: "..."
+    expected_output: "h..."
+
+  - name: empty_string
+    input:
+      text: ""
+      max_length: 10
+      ellipsis: "..."
+    expected_output: ""
+
+invariants:
+  - description: "Output never exceeds max_length"
+    check: "len(output) <= input['max_length']"
+
+  - description: "Short strings unchanged"
+    check: "output == input['text'] if len(input['text']) <= input['max_length'] else True"

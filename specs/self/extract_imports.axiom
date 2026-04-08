@@ -1,0 +1,71 @@
+axiom: "0.1"
+
+metadata:
+  name: extract_imports
+  version: "1.0.0"
+  description: "Extract import statements from Python code"
+  target: "python:function"
+
+intent: |
+  Parse Python code and extract all import statements.
+  Returns a list of imported module names, handling both 'import x' and 'from x import y' forms.
+  Does not execute the code, only parses it.
+
+interface:
+  function_name: extract_imports
+  parameters:
+    - name: code
+      type: str
+      description: "Python source code"
+  returns:
+    type: "list[str]"
+    description: "List of imported module names"
+
+examples:
+  - name: simple_import
+    input:
+      code: "import os"
+    expected_output: ["os"]
+
+  - name: from_import
+    input:
+      code: "from pathlib import Path"
+    expected_output: ["pathlib"]
+
+  - name: multiple_imports
+    input:
+      code: |
+        import os
+        import sys
+        from pathlib import Path
+    expected_output: ["os", "sys", "pathlib"]
+
+  - name: import_as
+    input:
+      code: "import numpy as np"
+    expected_output: ["numpy"]
+
+  - name: nested_from_import
+    input:
+      code: "from collections.abc import Mapping"
+    expected_output: ["collections.abc"]
+
+  - name: no_imports
+    input:
+      code: "x = 1\ny = 2"
+    expected_output: []
+
+  - name: submodule_import
+    input:
+      code: "import os.path"
+    expected_output: ["os.path"]
+
+invariants:
+  - description: "Returns a list"
+    check: "isinstance(output, list)"
+
+  - description: "All elements are strings"
+    check: "all(isinstance(x, str) for x in output)"
+
+  - description: "No empty strings"
+    check: "all(x for x in output)"

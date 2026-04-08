@@ -1,0 +1,79 @@
+axiom: "0.1"
+
+metadata:
+  name: escape_regex
+  version: "1.0.0"
+  description: "Escape special regex characters in a string"
+  target: "python:function"
+
+intent: |
+  Escape all special regex metacharacters in a string so it can be used
+  as a literal pattern in a regular expression.
+
+interface:
+  function_name: escape_regex
+  parameters:
+    - name: pattern
+      type: str
+      description: "The string to escape"
+  returns:
+    type: str
+    description: "Escaped string safe for regex"
+
+examples:
+  - name: no_special_chars
+    input:
+      pattern: "hello"
+    expected_output: "hello"
+
+  - name: dot
+    input:
+      pattern: "file.txt"
+    expected_output: "file\\.txt"
+
+  - name: brackets
+    input:
+      pattern: "[test]"
+    expected_output: "\\[test\\]"
+
+  - name: parens
+    input:
+      pattern: "(group)"
+    expected_output: "\\(group\\)"
+
+  - name: asterisk
+    input:
+      pattern: "*.py"
+    expected_output: "\\*\\.py"
+
+  - name: question_mark
+    input:
+      pattern: "test?"
+    expected_output: "test\\?"
+
+  - name: caret_dollar
+    input:
+      pattern: "^start$"
+    expected_output: "\\^start\\$"
+
+  - name: pipe
+    input:
+      pattern: "a|b"
+    expected_output: "a\\|b"
+
+  - name: backslash
+    input:
+      pattern: "path\\to"
+    expected_output: "path\\\\to"
+
+  - name: empty_string
+    input:
+      pattern: ""
+    expected_output: ""
+
+invariants:
+  - description: "Output can be used as regex pattern"
+    check: "True"
+
+  - description: "Plain text unchanged"
+    check: "output == input['pattern'] if input['pattern'].isalnum() else True"

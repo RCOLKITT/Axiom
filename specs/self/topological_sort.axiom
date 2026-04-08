@@ -1,0 +1,67 @@
+axiom: "0.1"
+
+metadata:
+  name: topological_sort
+  version: "1.0.0"
+  description: "Topologically sort a directed acyclic graph"
+  target: "python:function"
+
+intent: |
+  Perform topological sort on a directed acyclic graph (DAG).
+  Takes a graph represented as a dict mapping node names to lists of dependencies.
+  Returns nodes in order such that all dependencies come before dependents.
+  Raises ValueError if a cycle is detected.
+
+interface:
+  function_name: topological_sort
+  parameters:
+    - name: graph
+      type: "dict[str, list[str]]"
+      description: "Graph as adjacency list (node -> dependencies)"
+  returns:
+    type: "list[str]"
+    description: "Topologically sorted node names"
+
+examples:
+  - name: simple_chain
+    input:
+      graph: {"a": [], "b": ["a"], "c": ["b"]}
+    expected_output: ["a", "b", "c"]
+
+  - name: diamond
+    input:
+      graph: {"a": [], "b": ["a"], "c": ["a"], "d": ["b", "c"]}
+    expected_output: ["a", "b", "c", "d"]
+
+  - name: single_node
+    input:
+      graph: {"a": []}
+    expected_output: ["a"]
+
+  - name: independent_nodes
+    input:
+      graph: {"a": [], "b": [], "c": []}
+    expected_output: ["a", "b", "c"]
+
+  - name: empty_graph
+    input:
+      graph: {}
+    expected_output: []
+
+  - name: cycle_detection
+    input:
+      graph: {"a": ["b"], "b": ["a"]}
+    expected_output:
+      raises: "ValueError"
+
+invariants:
+  - description: "All nodes from input appear in output"
+    check: "set(output) == set(input['graph'].keys()) if isinstance(output, list) else True"
+
+  - description: "Dependencies come before dependents"
+    check: |
+      all(
+        output.index(dep) < output.index(node)
+        for node, deps in input['graph'].items()
+        for dep in deps
+      ) if isinstance(output, list) else True

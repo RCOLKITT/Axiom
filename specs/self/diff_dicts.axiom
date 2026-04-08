@@ -1,0 +1,83 @@
+axiom: "0.1"
+
+metadata:
+  name: diff_dicts
+  version: "1.0.0"
+  description: "Compute difference between two dictionaries"
+  target: "python:function"
+
+intent: |
+  Compute the difference between two dictionaries.
+  Returns added, removed, and changed keys with their values.
+
+interface:
+  function_name: diff_dicts
+  parameters:
+    - name: old
+      type: "dict[str, Any]"
+      description: "Original dictionary"
+    - name: new
+      type: "dict[str, Any]"
+      description: "New dictionary"
+  returns:
+    type: "dict[str, dict[str, Any]]"
+    description: "Diff with 'added', 'removed', 'changed' keys"
+
+examples:
+  - name: no_changes
+    input:
+      old: {"a": 1, "b": 2}
+      new: {"a": 1, "b": 2}
+    expected_output:
+      added: {}
+      removed: {}
+      changed: {}
+
+  - name: key_added
+    input:
+      old: {"a": 1}
+      new: {"a": 1, "b": 2}
+    expected_output:
+      added: {"b": 2}
+      removed: {}
+      changed: {}
+
+  - name: key_removed
+    input:
+      old: {"a": 1, "b": 2}
+      new: {"a": 1}
+    expected_output:
+      added: {}
+      removed: {"b": 2}
+      changed: {}
+
+  - name: value_changed
+    input:
+      old: {"a": 1}
+      new: {"a": 2}
+    expected_output:
+      added: {}
+      removed: {}
+      changed: {"a": {"old": 1, "new": 2}}
+
+  - name: mixed_changes
+    input:
+      old: {"a": 1, "b": 2}
+      new: {"a": 10, "c": 3}
+    expected_output:
+      added: {"c": 3}
+      removed: {"b": 2}
+      changed: {"a": {"old": 1, "new": 10}}
+
+  - name: empty_to_values
+    input:
+      old: {}
+      new: {"a": 1, "b": 2}
+    expected_output:
+      added: {"a": 1, "b": 2}
+      removed: {}
+      changed: {}
+
+invariants:
+  - description: "Always has all three keys"
+    check: "set(output.keys()) == {'added', 'removed', 'changed'}"

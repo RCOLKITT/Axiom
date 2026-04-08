@@ -14,9 +14,11 @@ from pathlib import Path
 from lsprotocol import types as lsp
 from pygls.lsp.server import LanguageServer
 
+from axiom.lsp.actions import get_code_actions
 from axiom.lsp.completion import get_completions
 from axiom.lsp.diagnostics import validate_document
 from axiom.lsp.hover import get_hover_info
+from axiom.lsp.symbols import get_document_symbols
 
 # Server metadata
 SERVER_NAME = "axiom-lsp"
@@ -86,6 +88,24 @@ def create_server() -> LanguageServer:
         doc = server.workspace.get_text_document(params.text_document.uri)
         return _find_definition(doc.source, params.position, doc.uri, server)
 
+    @server.feature(lsp.TEXT_DOCUMENT_DOCUMENT_SYMBOL)
+    def document_symbol(
+        params: lsp.DocumentSymbolParams,
+    ) -> list[lsp.DocumentSymbol]:
+        """Provide document symbols for outline view."""
+        doc = server.workspace.get_text_document(params.text_document.uri)
+        return get_document_symbols(doc.source)
+
+    @server.feature(lsp.TEXT_DOCUMENT_CODE_ACTION)
+    def code_action(params: lsp.CodeActionParams) -> list[lsp.CodeAction]:
+        """Provide code actions and quick fixes."""
+        doc = server.workspace.get_text_document(params.text_document.uri)
+        return get_code_actions(
+            doc.source,
+            params.context.diagnostics,
+            params.text_document.uri,
+        )
+
     @server.feature(lsp.INITIALIZE)
     def initialize(params: lsp.InitializeParams) -> lsp.InitializeResult:
         """Handle LSP initialization."""
@@ -102,6 +122,13 @@ def create_server() -> LanguageServer:
                 ),
                 hover_provider=True,
                 definition_provider=True,
+                document_symbol_provider=True,
+                code_action_provider=lsp.CodeActionOptions(
+                    code_action_kinds=[
+                        lsp.CodeActionKind.QuickFix,
+                        lsp.CodeActionKind.SourceOrganizeImports,
+                    ],
+                ),
             ),
             server_info=lsp.ServerInfo(name=SERVER_NAME, version=SERVER_VERSION),
         )

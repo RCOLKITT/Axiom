@@ -1,0 +1,89 @@
+axiom: "0.1"
+
+metadata:
+  name: parse_version
+  version: "1.0.0"
+  description: "Parse semantic version string"
+  target: "python:function"
+
+intent: |
+  Parse a semantic version string into its components.
+  Handles versions like "1.2.3", "1.2.3-alpha", "1.2.3+build".
+
+interface:
+  function_name: parse_version
+  parameters:
+    - name: version
+      type: str
+      description: "Version string to parse"
+  returns:
+    type: "dict[str, Any]"
+    description: "Parsed version components"
+
+examples:
+  - name: simple_version
+    input:
+      version: "1.2.3"
+    expected_output:
+      major: 1
+      minor: 2
+      patch: 3
+      prerelease: null
+      build: null
+
+  - name: with_prerelease
+    input:
+      version: "1.0.0-alpha"
+    expected_output:
+      major: 1
+      minor: 0
+      patch: 0
+      prerelease: "alpha"
+      build: null
+
+  - name: with_build
+    input:
+      version: "1.0.0+build123"
+    expected_output:
+      major: 1
+      minor: 0
+      patch: 0
+      prerelease: null
+      build: "build123"
+
+  - name: full_version
+    input:
+      version: "2.1.0-beta.1+build.456"
+    expected_output:
+      major: 2
+      minor: 1
+      patch: 0
+      prerelease: "beta.1"
+      build: "build.456"
+
+  - name: two_part_version
+    input:
+      version: "1.0"
+    expected_output:
+      major: 1
+      minor: 0
+      patch: 0
+      prerelease: null
+      build: null
+
+  - name: zero_version
+    input:
+      version: "0.0.0"
+    expected_output:
+      major: 0
+      minor: 0
+      patch: 0
+      prerelease: null
+      build: null
+
+invariants:
+  - description: "Major, minor, patch are non-negative"
+    check: "output['major'] >= 0 and output['minor'] >= 0 and output['patch'] >= 0"
+
+  - description: "Always has required keys"
+    check: "all(k in output for k in ['major', 'minor', 'patch'])"

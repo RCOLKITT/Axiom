@@ -1,0 +1,78 @@
+axiom: "0.1"
+
+metadata:
+  name: clamp
+  version: "1.0.0"
+  description: "Clamp a value within a range"
+  target: "python:function"
+
+intent: |
+  Clamp a numeric value to be within a specified range.
+  If value is below min, return min. If above max, return max.
+  Otherwise return the value unchanged.
+
+interface:
+  function_name: clamp
+  parameters:
+    - name: value
+      type: float
+      description: "The value to clamp"
+    - name: min_val
+      type: float
+      description: "Minimum allowed value"
+    - name: max_val
+      type: float
+      description: "Maximum allowed value"
+  returns:
+    type: float
+    description: "Clamped value"
+
+examples:
+  - name: within_range
+    input:
+      value: 5.0
+      min_val: 0.0
+      max_val: 10.0
+    expected_output: 5.0
+
+  - name: below_min
+    input:
+      value: -5.0
+      min_val: 0.0
+      max_val: 10.0
+    expected_output: 0.0
+
+  - name: above_max
+    input:
+      value: 15.0
+      min_val: 0.0
+      max_val: 10.0
+    expected_output: 10.0
+
+  - name: at_min
+    input:
+      value: 0.0
+      min_val: 0.0
+      max_val: 10.0
+    expected_output: 0.0
+
+  - name: at_max
+    input:
+      value: 10.0
+      min_val: 0.0
+      max_val: 10.0
+    expected_output: 10.0
+
+  - name: negative_range
+    input:
+      value: 0.0
+      min_val: -10.0
+      max_val: -5.0
+    expected_output: -5.0
+
+invariants:
+  - description: "Output is within range"
+    check: "input['min_val'] <= output <= input['max_val']"
+
+  - description: "Idempotent"
+    check: "clamp(output, input['min_val'], input['max_val']) == output"
