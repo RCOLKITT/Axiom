@@ -18,6 +18,7 @@ except ImportError:
 from axiom import __version__
 from axiom.cli.build_cmd import build
 from axiom.cli.cache_cmd import cache
+from axiom.cli.create_cmd import create
 from axiom.cli.diff_cmd import diff
 from axiom.cli.doctor_cmd import doctor
 from axiom.cli.explain_cmd import explain
@@ -94,6 +95,7 @@ def cli(ctx: click.Context, verbose: bool) -> None:
 # Register commands
 cli.add_command(init)
 cli.add_command(new)
+cli.add_command(create)
 cli.add_command(build)
 cli.add_command(verify)
 cli.add_command(watch)
