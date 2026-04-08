@@ -35,14 +35,15 @@ from axiom.spec.models import (
 logger = structlog.get_logger()
 
 
-def parse_spec_file(file_path: Path | str) -> Spec:
+def parse_spec_file(file_path: Path | str, resolve_extends: bool = False) -> Spec:
     """Parse a .axiom spec file.
 
     Args:
         file_path: Path to the .axiom file.
+        resolve_extends: If True, resolve spec inheritance/composition.
 
     Returns:
-        Parsed Spec object.
+        Parsed Spec object (with inheritance resolved if resolve_extends=True).
 
     Raises:
         SpecParseError: If the file cannot be read or parsed as YAML.
@@ -71,7 +72,26 @@ def parse_spec_file(file_path: Path | str) -> Spec:
         ) from e
 
     logger.debug("Parsing spec file", path=str(path))
-    return parse_spec(content, file_path=str(path))
+    spec = parse_spec(content, file_path=str(path))
+
+    # Handle spec composition if extends is present and resolution is requested
+    if resolve_extends:
+        raw_data = yaml.safe_load(content)
+        if raw_data and "extends" in raw_data:
+            from axiom.spec.composition import resolve_extends as do_resolve
+
+            spec = do_resolve(
+                spec=spec,
+                extends=raw_data["extends"],
+                spec_dir=path.parent,
+            )
+            logger.info(
+                "Resolved spec inheritance",
+                spec=spec.metadata.name,
+                extends=raw_data["extends"],
+            )
+
+    return spec
 
 
 def parse_spec(content: str, file_path: str = "<string>") -> Spec:
@@ -135,6 +155,7 @@ def parse_spec(content: str, file_path: str = "<string>") -> Spec:
         "invariants",
         "constraints",
         "dependencies",
+        "extends",  # Spec composition support
     }
     unknown_keys = set(data.keys()) - known_keys
     if unknown_keys:

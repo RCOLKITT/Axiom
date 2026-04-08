@@ -16,6 +16,7 @@ except ImportError:
     pass  # dotenv not installed, skip
 
 from axiom import __version__
+from axiom.cli.build_all_cmd import build_all
 from axiom.cli.build_cmd import build
 from axiom.cli.cache_cmd import cache
 from axiom.cli.create_cmd import create
@@ -27,8 +28,10 @@ from axiom.cli.init_cmd import init
 from axiom.cli.lint_cmd import lint
 from axiom.cli.lsp_cmd import lsp
 from axiom.cli.new_cmd import new
+from axiom.cli.prove_cmd import prove
 from axiom.cli.provenance_cmd import provenance
 from axiom.cli.stats_cmd import stats
+from axiom.cli.sync_cmd import sync
 from axiom.cli.verify_cmd import verify
 from axiom.cli.watch_cmd import watch
 
@@ -97,6 +100,7 @@ cli.add_command(init)
 cli.add_command(new)
 cli.add_command(create)
 cli.add_command(build)
+cli.add_command(build_all)
 cli.add_command(verify)
 cli.add_command(watch)
 cli.add_command(lint)
@@ -104,8 +108,10 @@ cli.add_command(infer)
 cli.add_command(infer_all)
 cli.add_command(cache)
 cli.add_command(provenance)
+cli.add_command(prove)
 cli.add_command(lsp)
 cli.add_command(diff)
+cli.add_command(sync)
 cli.add_command(doctor)
 cli.add_command(stats)
 cli.add_command(explain)
