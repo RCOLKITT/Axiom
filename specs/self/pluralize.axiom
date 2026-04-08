@@ -1,0 +1,79 @@
+axiom: "0.1"
+
+metadata:
+  name: pluralize
+  version: "1.0.0"
+  description: "Pluralize a word based on count"
+  target: "python:function"
+
+intent: |
+  Return singular or plural form of a word based on count.
+  Handles common English pluralization rules but also accepts
+  explicit plural form.
+
+interface:
+  function_name: pluralize
+  parameters:
+    - name: count
+      type: int
+      description: "The count to determine singular/plural"
+    - name: singular
+      type: str
+      description: "Singular form of the word"
+    - name: plural
+      type: "str | None"
+      description: "Explicit plural form (default: add 's')"
+      default: null
+  returns:
+    type: str
+    description: "Formatted string with count and word"
+
+examples:
+  - name: single_item
+    input:
+      count: 1
+      singular: "test"
+      plural: null
+    expected_output: "1 test"
+
+  - name: multiple_items
+    input:
+      count: 5
+      singular: "test"
+      plural: null
+    expected_output: "5 tests"
+
+  - name: zero_items
+    input:
+      count: 0
+      singular: "test"
+      plural: null
+    expected_output: "0 tests"
+
+  - name: explicit_plural
+    input:
+      count: 3
+      singular: "child"
+      plural: "children"
+    expected_output: "3 children"
+
+  - name: explicit_plural_singular
+    input:
+      count: 1
+      singular: "child"
+      plural: "children"
+    expected_output: "1 child"
+
+  - name: negative_count
+    input:
+      count: -1
+      singular: "item"
+      plural: null
+    expected_output: "-1 item"
+
+invariants:
+  - description: "Contains the count"
+    check: "str(input['count']) in output"
+
+  - description: "Singular for count 1 or -1"
+    check: "input['singular'] in output if abs(input['count']) == 1 else True"

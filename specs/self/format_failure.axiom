@@ -1,0 +1,73 @@
+axiom: "0.1"
+
+metadata:
+  name: format_failure
+  version: "1.0.0"
+  description: "Format a test failure message for display"
+  target: "python:function"
+
+intent: |
+  Format a test failure message for display to the user.
+  Shows the test name, expected value, actual value, and optional error message.
+  The output should be clear and help the user understand what went wrong.
+
+interface:
+  function_name: format_failure
+  parameters:
+    - name: test_name
+      type: str
+      description: "Name of the failing test"
+    - name: expected
+      type: Any
+      description: "Expected value"
+    - name: actual
+      type: Any
+      description: "Actual value received"
+    - name: error_message
+      type: "str | None"
+      description: "Optional additional error context"
+  returns:
+    type: str
+    description: "Formatted failure message"
+
+examples:
+  - name: simple_failure
+    input:
+      test_name: "test_add"
+      expected: 5
+      actual: 4
+      error_message: null
+    expected_output: |
+      FAILED: test_add
+        Expected: 5
+        Actual: 4
+
+  - name: with_error_message
+    input:
+      test_name: "test_divide"
+      expected: 2.5
+      actual: null
+      error_message: "ZeroDivisionError: division by zero"
+    expected_output: |
+      FAILED: test_divide
+        Expected: 2.5
+        Actual: None
+        Error: ZeroDivisionError: division by zero
+
+  - name: string_comparison
+    input:
+      test_name: "test_greet"
+      expected: "Hello, World!"
+      actual: "Hello, world!"
+      error_message: null
+    expected_output: |
+      FAILED: test_greet
+        Expected: "Hello, World!"
+        Actual: "Hello, world!"
+
+invariants:
+  - description: "Output contains test name"
+    check: "input['test_name'] in output"
+
+  - description: "Output starts with FAILED"
+    check: "output.startswith('FAILED')"

@@ -1,0 +1,82 @@
+axiom: "0.1"
+
+metadata:
+  name: sanitize_filename
+  version: "1.0.0"
+  description: "Sanitize a string for use as a filename"
+  target: "python:function"
+
+intent: |
+  Sanitize a string so it can be safely used as a filename.
+  Removes or replaces characters that are invalid in filenames
+  on common operating systems.
+
+interface:
+  function_name: sanitize_filename
+  parameters:
+    - name: name
+      type: str
+      description: "The filename to sanitize"
+    - name: replacement
+      type: str
+      description: "Character to replace invalid chars with"
+      default: "_"
+  returns:
+    type: str
+    description: "Sanitized filename"
+
+examples:
+  - name: valid_name
+    input:
+      name: "document.txt"
+      replacement: "_"
+    expected_output: "document.txt"
+
+  - name: remove_slashes
+    input:
+      name: "path/to/file.txt"
+      replacement: "_"
+    expected_output: "path_to_file.txt"
+
+  - name: remove_backslashes
+    input:
+      name: "path\\to\\file.txt"
+      replacement: "_"
+    expected_output: "path_to_file.txt"
+
+  - name: remove_colons
+    input:
+      name: "C:file.txt"
+      replacement: "_"
+    expected_output: "C_file.txt"
+
+  - name: remove_special
+    input:
+      name: "file<>:\"|?*.txt"
+      replacement: ""
+    expected_output: "file.txt"
+
+  - name: spaces_preserved
+    input:
+      name: "my document.txt"
+      replacement: "_"
+    expected_output: "my document.txt"
+
+  - name: empty_string
+    input:
+      name: ""
+      replacement: "_"
+    expected_output: ""
+
+  - name: reserved_names
+    input:
+      name: "CON"
+      replacement: "_"
+    expected_output: "_CON"
+
+invariants:
+  - description: "No invalid characters"
+    check: "all(c not in '\\\\/:*?\"<>|' for c in output)"
+
+  - description: "Not empty unless input empty"
+    check: "len(output) > 0 or input['name'] == ''"

@@ -1,0 +1,70 @@
+axiom: "0.1"
+
+metadata:
+  name: wrap_text
+  version: "1.0.0"
+  description: "Wrap text to specified line width"
+  target: "python:function"
+
+intent: |
+  Wrap text to a specified line width. Breaks on word boundaries
+  when possible. Preserves existing line breaks. Handles long words
+  by breaking them if they exceed the width.
+
+interface:
+  function_name: wrap_text
+  parameters:
+    - name: text
+      type: str
+      description: "The text to wrap"
+    - name: width
+      type: int
+      description: "Maximum line width"
+      default: 80
+  returns:
+    type: str
+    description: "Wrapped text"
+
+examples:
+  - name: short_text
+    input:
+      text: "Hello"
+      width: 80
+    expected_output: "Hello"
+
+  - name: simple_wrap
+    input:
+      text: "The quick brown fox jumps over the lazy dog"
+      width: 20
+    expected_output: "The quick brown fox\njumps over the lazy\ndog"
+
+  - name: preserve_newlines
+    input:
+      text: "Line one\nLine two"
+      width: 80
+    expected_output: "Line one\nLine two"
+
+  - name: long_word
+    input:
+      text: "supercalifragilisticexpialidocious"
+      width: 10
+    expected_output: "supercalif\nragilistic\nexpialidoc\nious"
+
+  - name: empty_text
+    input:
+      text: ""
+      width: 80
+    expected_output: ""
+
+  - name: exact_width
+    input:
+      text: "hello"
+      width: 5
+    expected_output: "hello"
+
+invariants:
+  - description: "No line exceeds width"
+    check: "all(len(line) <= input['width'] for line in output.split('\\n'))"
+
+  - description: "Empty input gives empty output"
+    check: "output == '' if input['text'] == '' else True"

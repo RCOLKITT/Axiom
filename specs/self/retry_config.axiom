@@ -1,0 +1,89 @@
+axiom: "0.1"
+
+metadata:
+  name: retry_config
+  version: "1.0.0"
+  description: "Calculate retry delay with exponential backoff"
+  target: "python:function"
+
+intent: |
+  Calculate the delay before the next retry attempt using exponential backoff.
+  Delay doubles with each attempt, up to a maximum. Optionally adds jitter.
+
+interface:
+  function_name: retry_config
+  parameters:
+    - name: attempt
+      type: int
+      description: "Current attempt number (1-indexed)"
+    - name: base_delay
+      type: float
+      description: "Base delay in seconds"
+      default: 1.0
+    - name: max_delay
+      type: float
+      description: "Maximum delay in seconds"
+      default: 60.0
+    - name: jitter
+      type: bool
+      description: "Add random jitter (not deterministic)"
+      default: false
+  returns:
+    type: float
+    description: "Delay in seconds before next retry"
+
+examples:
+  - name: first_attempt
+    input:
+      attempt: 1
+      base_delay: 1.0
+      max_delay: 60.0
+      jitter: false
+    expected_output: 1.0
+
+  - name: second_attempt
+    input:
+      attempt: 2
+      base_delay: 1.0
+      max_delay: 60.0
+      jitter: false
+    expected_output: 2.0
+
+  - name: third_attempt
+    input:
+      attempt: 3
+      base_delay: 1.0
+      max_delay: 60.0
+      jitter: false
+    expected_output: 4.0
+
+  - name: capped_at_max
+    input:
+      attempt: 10
+      base_delay: 1.0
+      max_delay: 60.0
+      jitter: false
+    expected_output: 60.0
+
+  - name: custom_base
+    input:
+      attempt: 2
+      base_delay: 2.0
+      max_delay: 60.0
+      jitter: false
+    expected_output: 4.0
+
+  - name: zero_attempt
+    input:
+      attempt: 0
+      base_delay: 1.0
+      max_delay: 60.0
+      jitter: false
+    expected_output: 0.5
+
+invariants:
+  - description: "Never exceeds max delay"
+    check: "output <= input['max_delay']"
+
+  - description: "Always positive for positive attempts"
+    check: "output > 0 if input['attempt'] > 0 else True"

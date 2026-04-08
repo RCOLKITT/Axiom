@@ -1,0 +1,84 @@
+axiom: "0.1"
+
+metadata:
+  name: format_bytes
+  version: "1.0.0"
+  description: "Format byte size as human-readable string"
+  target: "python:function"
+
+intent: |
+  Convert a byte count to a human-readable string with appropriate units.
+  Uses binary units (KiB, MiB, GiB) by default but can use decimal (KB, MB, GB).
+
+interface:
+  function_name: format_bytes
+  parameters:
+    - name: size
+      type: int
+      description: "Size in bytes"
+    - name: binary
+      type: bool
+      description: "Use binary units (1024) vs decimal (1000)"
+      default: true
+  returns:
+    type: str
+    description: "Formatted size string"
+
+examples:
+  - name: bytes_only
+    input:
+      size: 500
+      binary: true
+    expected_output: "500 B"
+
+  - name: kibibytes
+    input:
+      size: 1024
+      binary: true
+    expected_output: "1.0 KiB"
+
+  - name: mebibytes
+    input:
+      size: 1048576
+      binary: true
+    expected_output: "1.0 MiB"
+
+  - name: gibibytes
+    input:
+      size: 1073741824
+      binary: true
+    expected_output: "1.0 GiB"
+
+  - name: decimal_kilobytes
+    input:
+      size: 1000
+      binary: false
+    expected_output: "1.0 KB"
+
+  - name: decimal_megabytes
+    input:
+      size: 1000000
+      binary: false
+    expected_output: "1.0 MB"
+
+  - name: zero_bytes
+    input:
+      size: 0
+      binary: true
+    expected_output: "0 B"
+
+  - name: fractional
+    input:
+      size: 1536
+      binary: true
+    expected_output: "1.5 KiB"
+
+invariants:
+  - description: "Output contains a number"
+    check: "any(c.isdigit() for c in output)"
+
+  - description: "Output contains a unit"
+    check: "'B' in output"
+
+  - description: "Zero bytes is always '0 B'"
+    check: "output == '0 B' if input['size'] == 0 else True"

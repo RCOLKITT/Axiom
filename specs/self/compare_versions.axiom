@@ -1,0 +1,78 @@
+axiom: "0.1"
+
+metadata:
+  name: compare_versions
+  version: "1.0.0"
+  description: "Compare two semantic versions"
+  target: "python:function"
+
+intent: |
+  Compare two semantic version strings.
+  Returns -1 if v1 < v2, 0 if equal, 1 if v1 > v2.
+  Follows semver comparison rules.
+
+interface:
+  function_name: compare_versions
+  parameters:
+    - name: v1
+      type: str
+      description: "First version"
+    - name: v2
+      type: str
+      description: "Second version"
+  returns:
+    type: int
+    description: "-1, 0, or 1 for less, equal, greater"
+
+examples:
+  - name: equal_versions
+    input:
+      v1: "1.0.0"
+      v2: "1.0.0"
+    expected_output: 0
+
+  - name: major_greater
+    input:
+      v1: "2.0.0"
+      v2: "1.0.0"
+    expected_output: 1
+
+  - name: major_less
+    input:
+      v1: "1.0.0"
+      v2: "2.0.0"
+    expected_output: -1
+
+  - name: minor_greater
+    input:
+      v1: "1.2.0"
+      v2: "1.1.0"
+    expected_output: 1
+
+  - name: patch_greater
+    input:
+      v1: "1.0.2"
+      v2: "1.0.1"
+    expected_output: 1
+
+  - name: prerelease_less_than_release
+    input:
+      v1: "1.0.0-alpha"
+      v2: "1.0.0"
+    expected_output: -1
+
+  - name: different_length
+    input:
+      v1: "1.0"
+      v2: "1.0.0"
+    expected_output: 0
+
+invariants:
+  - description: "Result is -1, 0, or 1"
+    check: "output in [-1, 0, 1]"
+
+  - description: "Anti-symmetric"
+    check: "compare_versions(input['v2'], input['v1']) == -output if output != 0 else True"
+
+  - description: "Equal versions give 0"
+    check: "output == 0 if input['v1'] == input['v2'] else True"

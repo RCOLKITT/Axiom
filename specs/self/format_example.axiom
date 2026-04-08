@@ -1,0 +1,76 @@
+axiom: "0.1"
+
+metadata:
+  name: format_example
+  version: "1.0.0"
+  description: "Format an example for prompt display"
+  target: "python:function"
+
+intent: |
+  Format an example for display in a code generation prompt.
+  Includes the example name, input, and expected output in a readable format.
+  Uses triple quotes for multiline strings and handles various output types.
+
+interface:
+  function_name: format_example
+  parameters:
+    - name: name
+      type: str
+      description: "Name of the example"
+    - name: input_data
+      type: "dict[str, Any]"
+      description: "Input parameters as a dictionary"
+    - name: expected_output
+      type: Any
+      description: "Expected output value"
+  returns:
+    type: str
+    description: "Formatted example text for prompts"
+
+examples:
+  - name: simple_int
+    input:
+      name: "add_numbers"
+      input_data: {"a": 1, "b": 2}
+      expected_output: 3
+    expected_output: |
+      Example 'add_numbers':
+        Input: a=1, b=2
+        Expected Output: 3
+
+  - name: string_output
+    input:
+      name: "greet"
+      input_data: {"name": "Alice"}
+      expected_output: "Hello, Alice!"
+    expected_output: |
+      Example 'greet':
+        Input: name="Alice"
+        Expected Output: "Hello, Alice!"
+
+  - name: list_output
+    input:
+      name: "get_items"
+      input_data: {"count": 3}
+      expected_output: [1, 2, 3]
+    expected_output: |
+      Example 'get_items':
+        Input: count=3
+        Expected Output: [1, 2, 3]
+
+  - name: none_output
+    input:
+      name: "do_nothing"
+      input_data: {}
+      expected_output: null
+    expected_output: |
+      Example 'do_nothing':
+        Input: (no parameters)
+        Expected Output: None
+
+invariants:
+  - description: "Output contains example name"
+    check: "input['name'] in output"
+
+  - description: "Output contains 'Example' header"
+    check: "'Example' in output"

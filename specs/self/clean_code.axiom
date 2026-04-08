@@ -1,0 +1,60 @@
+axiom: "0.1"
+
+metadata:
+  name: clean_code
+  version: "1.0.0"
+  description: "Clean and normalize generated Python code"
+  target: "python:function"
+
+intent: |
+  Clean generated Python code by removing extra blank lines, normalizing
+  indentation, and ensuring consistent formatting. This is a pure text
+  transformation that does not require parsing the code as valid Python.
+
+interface:
+  function_name: clean_code
+  parameters:
+    - name: code
+      type: str
+      description: "The Python code to clean"
+  returns:
+    type: str
+    description: "The cleaned code"
+
+examples:
+  - name: remove_trailing_whitespace
+    input:
+      code: "def foo():    \n    pass   "
+    expected_output: "def foo():\n    pass"
+
+  - name: collapse_blank_lines
+    input:
+      code: "def foo():\n    pass\n\n\n\ndef bar():\n    pass"
+    expected_output: "def foo():\n    pass\n\n\ndef bar():\n    pass"
+
+  - name: add_trailing_newline
+    input:
+      code: "def foo():\n    pass"
+    expected_output: "def foo():\n    pass\n"
+
+  - name: empty_code
+    input:
+      code: ""
+    expected_output: ""
+
+  - name: only_whitespace
+    input:
+      code: "   \n   \n   "
+    expected_output: ""
+
+  - name: preserve_docstrings
+    input:
+      code: "def foo():\n    \"\"\"Docstring.\"\"\"\n    pass"
+    expected_output: "def foo():\n    \"\"\"Docstring.\"\"\"\n    pass\n"
+
+invariants:
+  - description: "No trailing whitespace on any line"
+    check: "all(not line.endswith(' ') and not line.endswith('\\t') for line in output.split('\\n'))"
+
+  - description: "No more than 2 consecutive blank lines"
+    check: "'\\n\\n\\n\\n' not in output"

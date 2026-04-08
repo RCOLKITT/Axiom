@@ -1,0 +1,51 @@
+axiom: "0.1"
+
+metadata:
+  name: format_invariant
+  version: "1.0.0"
+  description: "Format an invariant for prompt display"
+  target: "python:function"
+
+intent: |
+  Format an invariant (property) for display in a code generation prompt.
+  Includes the description and optional check expression.
+  The format should be clear and actionable for the LLM.
+
+interface:
+  function_name: format_invariant
+  parameters:
+    - name: description
+      type: str
+      description: "Description of the invariant"
+    - name: check
+      type: "str | None"
+      description: "Optional Python expression for verification"
+  returns:
+    type: str
+    description: "Formatted invariant text"
+
+examples:
+  - name: with_check
+    input:
+      description: "Output is always positive"
+      check: "output > 0"
+    expected_output: "- Output is always positive\n  Check: output > 0"
+
+  - name: without_check
+    input:
+      description: "Output maintains list order"
+      check: null
+    expected_output: "- Output maintains list order"
+
+  - name: complex_check
+    input:
+      description: "Output length matches input"
+      check: "len(output) == len(input['items'])"
+    expected_output: "- Output length matches input\n  Check: len(output) == len(input['items'])"
+
+invariants:
+  - description: "Output starts with dash"
+    check: "output.startswith('- ')"
+
+  - description: "Description is included"
+    check: "input['description'] in output"

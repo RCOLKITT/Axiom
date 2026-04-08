@@ -1,0 +1,80 @@
+axiom: "0.1"
+
+metadata:
+  name: indent_text
+  version: "1.0.0"
+  description: "Indent all lines of text by a specified amount"
+  target: "python:function"
+
+intent: |
+  Indent all lines of text by a specified number of spaces.
+  Empty lines remain empty (not indented). Uses spaces by default
+  but can use tabs or custom prefix.
+
+interface:
+  function_name: indent_text
+  parameters:
+    - name: text
+      type: str
+      description: "The text to indent"
+    - name: spaces
+      type: int
+      description: "Number of spaces to indent"
+      default: 4
+    - name: prefix
+      type: "str | None"
+      description: "Custom prefix instead of spaces"
+      default: null
+  returns:
+    type: str
+    description: "Indented text"
+
+examples:
+  - name: single_line
+    input:
+      text: "hello"
+      spaces: 4
+      prefix: null
+    expected_output: "    hello"
+
+  - name: multiple_lines
+    input:
+      text: "line1\nline2\nline3"
+      spaces: 2
+      prefix: null
+    expected_output: "  line1\n  line2\n  line3"
+
+  - name: with_empty_lines
+    input:
+      text: "line1\n\nline2"
+      spaces: 4
+      prefix: null
+    expected_output: "    line1\n\n    line2"
+
+  - name: custom_prefix
+    input:
+      text: "line1\nline2"
+      spaces: 0
+      prefix: "> "
+    expected_output: "> line1\n> line2"
+
+  - name: empty_text
+    input:
+      text: ""
+      spaces: 4
+      prefix: null
+    expected_output: ""
+
+  - name: tab_indent
+    input:
+      text: "code"
+      spaces: 0
+      prefix: "\t"
+    expected_output: "\tcode"
+
+invariants:
+  - description: "Empty text stays empty"
+    check: "output == '' if input['text'] == '' else True"
+
+  - description: "Same number of lines"
+    check: "output.count('\\n') == input['text'].count('\\n')"

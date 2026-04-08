@@ -1,0 +1,75 @@
+axiom: "0.1"
+
+metadata:
+  name: count_lines
+  version: "1.0.0"
+  description: "Count lines of code excluding comments and blanks"
+  target: "python:function"
+
+intent: |
+  Count the number of significant lines of code in Python source.
+  Excludes blank lines and comment-only lines. Includes lines with
+  inline comments as significant lines.
+
+interface:
+  function_name: count_lines
+  parameters:
+    - name: code
+      type: str
+      description: "Python source code"
+  returns:
+    type: int
+    description: "Number of significant lines"
+
+examples:
+  - name: simple_code
+    input:
+      code: |
+        def hello():
+            print("hello")
+    expected_output: 2
+
+  - name: with_comments
+    input:
+      code: |
+        # This is a comment
+        def hello():
+            # Another comment
+            print("hello")  # inline comment counts
+    expected_output: 2
+
+  - name: blank_lines
+    input:
+      code: |
+        def hello():
+
+            print("hello")
+
+    expected_output: 2
+
+  - name: empty_code
+    input:
+      code: ""
+    expected_output: 0
+
+  - name: only_comments
+    input:
+      code: |
+        # Comment 1
+        # Comment 2
+    expected_output: 0
+
+  - name: docstring
+    input:
+      code: |
+        def hello():
+            """This is a docstring."""
+            pass
+    expected_output: 3
+
+invariants:
+  - description: "Non-negative result"
+    check: "output >= 0"
+
+  - description: "Empty code has zero lines"
+    check: "output == 0 if input['code'].strip() == '' else True"

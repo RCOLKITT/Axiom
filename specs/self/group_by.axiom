@@ -1,0 +1,70 @@
+axiom: "0.1"
+
+metadata:
+  name: group_by
+  version: "1.0.0"
+  description: "Group items by a key function"
+  target: "python:function"
+
+intent: |
+  Group items in a list by a key extracted from each item.
+  Returns a dictionary mapping keys to lists of items with that key.
+
+interface:
+  function_name: group_by
+  parameters:
+    - name: items
+      type: "list[dict[str, Any]]"
+      description: "List of dictionaries to group"
+    - name: key
+      type: str
+      description: "Key to group by"
+  returns:
+    type: "dict[str, list[dict[str, Any]]]"
+    description: "Grouped items"
+
+examples:
+  - name: simple_group
+    input:
+      items:
+        - {type: "a", value: 1}
+        - {type: "b", value: 2}
+        - {type: "a", value: 3}
+      key: "type"
+    expected_output:
+      a: [{type: "a", value: 1}, {type: "a", value: 3}]
+      b: [{type: "b", value: 2}]
+
+  - name: single_group
+    input:
+      items:
+        - {status: "active", id: 1}
+        - {status: "active", id: 2}
+      key: "status"
+    expected_output:
+      active: [{status: "active", id: 1}, {status: "active", id: 2}]
+
+  - name: empty_list
+    input:
+      items: []
+      key: "any"
+    expected_output: {}
+
+  - name: all_different
+    input:
+      items:
+        - {cat: "a", v: 1}
+        - {cat: "b", v: 2}
+        - {cat: "c", v: 3}
+      key: "cat"
+    expected_output:
+      a: [{cat: "a", v: 1}]
+      b: [{cat: "b", v: 2}]
+      c: [{cat: "c", v: 3}]
+
+invariants:
+  - description: "All items are included"
+    check: "sum(len(g) for g in output.values()) == len(input['items'])"
+
+  - description: "Each group has items with matching key"
+    check: "all(all(item[input['key']] == k for item in items) for k, items in output.items())"

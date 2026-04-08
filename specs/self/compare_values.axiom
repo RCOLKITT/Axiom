@@ -1,0 +1,107 @@
+axiom: "0.1"
+
+metadata:
+  name: compare_values
+  version: "1.0.0"
+  description: "Compare expected and actual values with type-aware tolerance"
+  target: "python:function"
+
+intent: |
+  Compare an expected value with an actual value for verification.
+  Handles various types including floats (with tolerance), nested structures,
+  and None values. Returns True if values match within tolerance.
+
+interface:
+  function_name: compare_values
+  parameters:
+    - name: expected
+      type: Any
+      description: "The expected value"
+    - name: actual
+      type: Any
+      description: "The actual value to compare"
+    - name: tolerance
+      type: float
+      description: "Tolerance for floating point comparison"
+      default: 1e-6
+  returns:
+    type: bool
+    description: "True if values match within tolerance"
+
+examples:
+  - name: exact_int
+    input:
+      expected: 42
+      actual: 42
+      tolerance: 0.000001
+    expected_output: true
+
+  - name: float_within_tolerance
+    input:
+      expected: 3.14159
+      actual: 3.14159001
+      tolerance: 0.0001
+    expected_output: true
+
+  - name: float_outside_tolerance
+    input:
+      expected: 3.14159
+      actual: 3.15
+      tolerance: 0.001
+    expected_output: false
+
+  - name: string_match
+    input:
+      expected: "hello"
+      actual: "hello"
+      tolerance: 0.000001
+    expected_output: true
+
+  - name: string_mismatch
+    input:
+      expected: "hello"
+      actual: "world"
+      tolerance: 0.000001
+    expected_output: false
+
+  - name: list_match
+    input:
+      expected: [1, 2, 3]
+      actual: [1, 2, 3]
+      tolerance: 0.000001
+    expected_output: true
+
+  - name: list_mismatch
+    input:
+      expected: [1, 2, 3]
+      actual: [1, 2, 4]
+      tolerance: 0.000001
+    expected_output: false
+
+  - name: none_match
+    input:
+      expected: null
+      actual: null
+      tolerance: 0.000001
+    expected_output: true
+
+  - name: none_mismatch
+    input:
+      expected: null
+      actual: 0
+      tolerance: 0.000001
+    expected_output: false
+
+  - name: dict_match
+    input:
+      expected: {"a": 1, "b": 2}
+      actual: {"a": 1, "b": 2}
+      tolerance: 0.000001
+    expected_output: true
+
+invariants:
+  - description: "Reflexive - value equals itself"
+    check: "compare_values(input['expected'], input['expected'], input['tolerance']) == True"
+
+  - description: "Symmetric for equal values"
+    check: "compare_values(input['expected'], input['actual'], input['tolerance']) == compare_values(input['actual'], input['expected'], input['tolerance'])"

@@ -1,0 +1,77 @@
+axiom: "0.1"
+
+metadata:
+  name: merge_dicts
+  version: "1.0.0"
+  description: "Deep merge multiple dictionaries"
+  target: "python:function"
+
+intent: |
+  Deep merge multiple dictionaries into one. Later dictionaries override
+  earlier ones. For nested dictionaries, merge recursively. For lists,
+  concatenate. For other types, use the later value.
+
+interface:
+  function_name: merge_dicts
+  parameters:
+    - name: dicts
+      type: "list[dict[str, Any]]"
+      description: "List of dictionaries to merge"
+  returns:
+    type: "dict[str, Any]"
+    description: "Merged dictionary"
+
+examples:
+  - name: simple_merge
+    input:
+      dicts:
+        - {"a": 1}
+        - {"b": 2}
+    expected_output: {"a": 1, "b": 2}
+
+  - name: override_value
+    input:
+      dicts:
+        - {"a": 1}
+        - {"a": 2}
+    expected_output: {"a": 2}
+
+  - name: nested_merge
+    input:
+      dicts:
+        - {"config": {"timeout": 30, "retries": 3}}
+        - {"config": {"timeout": 60}}
+    expected_output: {"config": {"timeout": 60, "retries": 3}}
+
+  - name: list_concatenation
+    input:
+      dicts:
+        - {"items": [1, 2]}
+        - {"items": [3, 4]}
+    expected_output: {"items": [1, 2, 3, 4]}
+
+  - name: empty_dicts
+    input:
+      dicts: [{}, {}, {}]
+    expected_output: {}
+
+  - name: single_dict
+    input:
+      dicts:
+        - {"a": 1, "b": 2}
+    expected_output: {"a": 1, "b": 2}
+
+  - name: three_way_merge
+    input:
+      dicts:
+        - {"a": 1}
+        - {"b": 2}
+        - {"c": 3}
+    expected_output: {"a": 1, "b": 2, "c": 3}
+
+invariants:
+  - description: "Result is always a dict"
+    check: "isinstance(output, dict)"
+
+  - description: "All keys from all dicts are present"
+    check: "all(k in output for d in input['dicts'] for k in d)"

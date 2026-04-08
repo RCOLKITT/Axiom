@@ -1,0 +1,85 @@
+axiom: "0.1"
+
+metadata:
+  name: is_valid_email
+  version: "1.0.0"
+  description: "Check if string is a valid email address"
+  target: "python:function"
+
+intent: |
+  Validate if a string is a syntactically valid email address.
+  Checks basic structure: local-part@domain. Does not verify
+  if the email actually exists.
+
+interface:
+  function_name: is_valid_email
+  parameters:
+    - name: email
+      type: str
+      description: "The email address to validate"
+  returns:
+    type: bool
+    description: "True if valid email syntax"
+
+examples:
+  - name: valid_simple
+    input:
+      email: "user@example.com"
+    expected_output: true
+
+  - name: valid_subdomain
+    input:
+      email: "user@mail.example.com"
+    expected_output: true
+
+  - name: valid_plus
+    input:
+      email: "user+tag@example.com"
+    expected_output: true
+
+  - name: valid_dots
+    input:
+      email: "first.last@example.com"
+    expected_output: true
+
+  - name: invalid_no_at
+    input:
+      email: "userexample.com"
+    expected_output: false
+
+  - name: invalid_no_domain
+    input:
+      email: "user@"
+    expected_output: false
+
+  - name: invalid_no_local
+    input:
+      email: "@example.com"
+    expected_output: false
+
+  - name: invalid_double_at
+    input:
+      email: "user@@example.com"
+    expected_output: false
+
+  - name: invalid_spaces
+    input:
+      email: "user @example.com"
+    expected_output: false
+
+  - name: empty_string
+    input:
+      email: ""
+    expected_output: false
+
+invariants:
+  - description: "Valid emails contain exactly one @"
+    check: "output == False or input['email'].count('@') == 1"
+
+  - description: "Valid emails have non-empty local and domain parts"
+    check: |
+      output == False or (
+        '@' in input['email'] and
+        input['email'].split('@')[0] and
+        input['email'].split('@')[1]
+      )

@@ -1,0 +1,78 @@
+axiom: "0.1"
+
+metadata:
+  name: lerp
+  version: "1.0.0"
+  description: "Linear interpolation between two values"
+  target: "python:function"
+
+intent: |
+  Perform linear interpolation between two values.
+  When t=0, return start. When t=1, return end.
+  Values of t outside [0,1] extrapolate.
+
+interface:
+  function_name: lerp
+  parameters:
+    - name: start
+      type: float
+      description: "Start value"
+    - name: end
+      type: float
+      description: "End value"
+    - name: t
+      type: float
+      description: "Interpolation factor"
+  returns:
+    type: float
+    description: "Interpolated value"
+
+examples:
+  - name: t_zero
+    input:
+      start: 0.0
+      end: 10.0
+      t: 0.0
+    expected_output: 0.0
+
+  - name: t_one
+    input:
+      start: 0.0
+      end: 10.0
+      t: 1.0
+    expected_output: 10.0
+
+  - name: t_half
+    input:
+      start: 0.0
+      end: 10.0
+      t: 0.5
+    expected_output: 5.0
+
+  - name: t_quarter
+    input:
+      start: 0.0
+      end: 100.0
+      t: 0.25
+    expected_output: 25.0
+
+  - name: negative_range
+    input:
+      start: -10.0
+      end: 10.0
+      t: 0.5
+    expected_output: 0.0
+
+  - name: extrapolate
+    input:
+      start: 0.0
+      end: 10.0
+      t: 2.0
+    expected_output: 20.0
+
+invariants:
+  - description: "t=0 gives start"
+    check: "output == input['start'] if input['t'] == 0 else True"
+
+  - description: "t=1 gives end"
+    check: "output == input['end'] if input['t'] == 1 else True"

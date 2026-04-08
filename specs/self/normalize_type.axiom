@@ -1,0 +1,65 @@
+axiom: "0.1"
+
+metadata:
+  name: normalize_type
+  version: "1.0.0"
+  description: "Normalize Python type annotation strings to canonical form"
+  target: "python:function"
+
+intent: |
+  Normalize a Python type annotation string to a canonical form.
+  Handles common variations like 'List' vs 'list', 'Optional' vs 'X | None',
+  and removes unnecessary whitespace. Returns the normalized type string.
+
+interface:
+  function_name: normalize_type
+  parameters:
+    - name: type_str
+      type: str
+      description: "The type annotation string to normalize"
+  returns:
+    type: str
+    description: "The normalized type annotation"
+
+examples:
+  - name: list_lowercase
+    input:
+      type_str: "List[str]"
+    expected_output: "list[str]"
+
+  - name: dict_lowercase
+    input:
+      type_str: "Dict[str, int]"
+    expected_output: "dict[str, int]"
+
+  - name: optional_to_union
+    input:
+      type_str: "Optional[str]"
+    expected_output: "str | None"
+
+  - name: remove_whitespace
+    input:
+      type_str: "dict[ str , int ]"
+    expected_output: "dict[str, int]"
+
+  - name: nested_types
+    input:
+      type_str: "List[Dict[str, List[int]]]"
+    expected_output: "list[dict[str, list[int]]]"
+
+  - name: simple_type
+    input:
+      type_str: "str"
+    expected_output: "str"
+
+  - name: any_type
+    input:
+      type_str: "Any"
+    expected_output: "Any"
+
+invariants:
+  - description: "Idempotent - normalizing twice gives same result"
+    check: "normalize_type(output) == output"
+
+  - description: "Empty string stays empty"
+    check: "output == '' if input['type_str'] == '' else True"

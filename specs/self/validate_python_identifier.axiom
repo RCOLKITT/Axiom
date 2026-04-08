@@ -1,0 +1,80 @@
+axiom: "0.1"
+
+metadata:
+  name: validate_python_identifier
+  version: "1.0.0"
+  description: "Validate that a string is a valid Python identifier"
+  target: "python:function"
+
+intent: |
+  Check if a given string is a valid Python identifier.
+  A valid identifier starts with a letter or underscore, followed by
+  letters, digits, or underscores. Also checks that it's not a reserved keyword.
+
+interface:
+  function_name: validate_python_identifier
+  parameters:
+    - name: name
+      type: str
+      description: "The string to validate"
+  returns:
+    type: bool
+    description: "True if valid Python identifier, False otherwise"
+
+examples:
+  - name: valid_simple
+    input:
+      name: "my_function"
+    expected_output: true
+
+  - name: valid_underscore_start
+    input:
+      name: "_private"
+    expected_output: true
+
+  - name: valid_with_numbers
+    input:
+      name: "func2"
+    expected_output: true
+
+  - name: invalid_starts_with_digit
+    input:
+      name: "2fast"
+    expected_output: false
+
+  - name: invalid_has_hyphen
+    input:
+      name: "my-function"
+    expected_output: false
+
+  - name: invalid_has_space
+    input:
+      name: "my function"
+    expected_output: false
+
+  - name: invalid_keyword
+    input:
+      name: "class"
+    expected_output: false
+
+  - name: invalid_keyword_def
+    input:
+      name: "def"
+    expected_output: false
+
+  - name: valid_dunder
+    input:
+      name: "__init__"
+    expected_output: true
+
+  - name: invalid_empty
+    input:
+      name: ""
+    expected_output: false
+
+invariants:
+  - description: "Empty strings are never valid"
+    check: "output == False if input['name'] == '' else True"
+
+  - description: "Consistent with Python's str.isidentifier"
+    check: "output == False or input['name'].isidentifier()"

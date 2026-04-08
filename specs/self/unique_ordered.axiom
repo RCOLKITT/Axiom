@@ -1,0 +1,67 @@
+axiom: "0.1"
+
+metadata:
+  name: unique_ordered
+  version: "1.0.0"
+  description: "Remove duplicates while preserving order"
+  target: "python:function"
+
+intent: |
+  Remove duplicate items from a list while preserving the order
+  of first occurrence. Works with any hashable items.
+
+interface:
+  function_name: unique_ordered
+  parameters:
+    - name: items
+      type: "list[Any]"
+      description: "The list to deduplicate"
+  returns:
+    type: "list[Any]"
+    description: "List with duplicates removed"
+
+examples:
+  - name: no_duplicates
+    input:
+      items: [1, 2, 3]
+    expected_output: [1, 2, 3]
+
+  - name: with_duplicates
+    input:
+      items: [1, 2, 2, 3, 1, 4]
+    expected_output: [1, 2, 3, 4]
+
+  - name: all_duplicates
+    input:
+      items: [1, 1, 1, 1]
+    expected_output: [1]
+
+  - name: strings
+    input:
+      items: ["a", "b", "a", "c", "b"]
+    expected_output: ["a", "b", "c"]
+
+  - name: empty_list
+    input:
+      items: []
+    expected_output: []
+
+  - name: single_item
+    input:
+      items: [42]
+    expected_output: [42]
+
+  - name: preserve_order
+    input:
+      items: [3, 1, 4, 1, 5, 9, 2, 6, 5]
+    expected_output: [3, 1, 4, 5, 9, 2, 6]
+
+invariants:
+  - description: "No duplicates in output"
+    check: "len(output) == len(set(output))"
+
+  - description: "All output items are from input"
+    check: "all(x in input['items'] for x in output)"
+
+  - description: "Order preserved (first occurrence)"
+    check: "output == [x for i, x in enumerate(input['items']) if x not in input['items'][:i]]"

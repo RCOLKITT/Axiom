@@ -1,0 +1,71 @@
+axiom: "0.1"
+
+metadata:
+  name: chunk_list
+  version: "1.0.0"
+  description: "Split a list into chunks of specified size"
+  target: "python:function"
+
+intent: |
+  Split a list into chunks of a specified size.
+  The last chunk may be smaller if the list doesn't divide evenly.
+
+interface:
+  function_name: chunk_list
+  parameters:
+    - name: items
+      type: "list[Any]"
+      description: "The list to chunk"
+    - name: size
+      type: int
+      description: "Maximum size of each chunk"
+  returns:
+    type: "list[list[Any]]"
+    description: "List of chunks"
+
+examples:
+  - name: even_division
+    input:
+      items: [1, 2, 3, 4, 5, 6]
+      size: 2
+    expected_output: [[1, 2], [3, 4], [5, 6]]
+
+  - name: uneven_division
+    input:
+      items: [1, 2, 3, 4, 5]
+      size: 2
+    expected_output: [[1, 2], [3, 4], [5]]
+
+  - name: single_chunk
+    input:
+      items: [1, 2, 3]
+      size: 5
+    expected_output: [[1, 2, 3]]
+
+  - name: one_per_chunk
+    input:
+      items: [1, 2, 3]
+      size: 1
+    expected_output: [[1], [2], [3]]
+
+  - name: empty_list
+    input:
+      items: []
+      size: 3
+    expected_output: []
+
+  - name: strings
+    input:
+      items: ["a", "b", "c", "d"]
+      size: 2
+    expected_output: [["a", "b"], ["c", "d"]]
+
+invariants:
+  - description: "Concatenation equals original"
+    check: "sum(output, []) == input['items']"
+
+  - description: "Each chunk <= size"
+    check: "all(len(chunk) <= input['size'] for chunk in output)"
+
+  - description: "All but last chunk = size (when items exist)"
+    check: "all(len(chunk) == input['size'] for chunk in output[:-1]) if output else True"

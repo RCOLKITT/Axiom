@@ -1,0 +1,81 @@
+axiom: "0.1"
+
+metadata:
+  name: snake_to_camel
+  version: "1.0.0"
+  description: "Convert snake_case to camelCase"
+  target: "python:function"
+
+intent: |
+  Convert a snake_case string to camelCase.
+  First word stays lowercase, subsequent words are capitalized.
+
+interface:
+  function_name: snake_to_camel
+  parameters:
+    - name: name
+      type: str
+      description: "The snake_case string"
+    - name: pascal
+      type: bool
+      description: "Use PascalCase instead (capitalize first word)"
+      default: false
+  returns:
+    type: str
+    description: "The camelCase or PascalCase string"
+
+examples:
+  - name: simple_snake
+    input:
+      name: "snake_case"
+      pascal: false
+    expected_output: "snakeCase"
+
+  - name: multiple_words
+    input:
+      name: "this_is_a_test"
+      pascal: false
+    expected_output: "thisIsATest"
+
+  - name: pascal_case
+    input:
+      name: "snake_case"
+      pascal: true
+    expected_output: "SnakeCase"
+
+  - name: already_camel
+    input:
+      name: "camelCase"
+      pascal: false
+    expected_output: "camelCase"
+
+  - name: single_word
+    input:
+      name: "word"
+      pascal: false
+    expected_output: "word"
+
+  - name: single_word_pascal
+    input:
+      name: "word"
+      pascal: true
+    expected_output: "Word"
+
+  - name: with_numbers
+    input:
+      name: "html_5_parser"
+      pascal: false
+    expected_output: "html5Parser"
+
+  - name: empty_string
+    input:
+      name: ""
+      pascal: false
+    expected_output: ""
+
+invariants:
+  - description: "No underscores in output"
+    check: "'_' not in output or output == input['name']"
+
+  - description: "Empty stays empty"
+    check: "output == '' if input['name'] == '' else True"
