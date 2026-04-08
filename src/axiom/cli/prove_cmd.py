@@ -126,6 +126,4 @@ def prove(
         click.echo("✓ Mathematical proofs provide stronger guarantees than testing!")
 
     if total_failed > 0:
-        raise click.ClickException(
-            f"Formal verification found {total_failed} counterexample(s)"
-        )
+        raise click.ClickException(f"Formal verification found {total_failed} counterexample(s)")

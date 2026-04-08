@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/provenance_cmd.py
+# hypothesis_version: 6.151.11
+
+[100, '  By action:', '  By result:', '%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '--action', '--limit', '--since', '--yes', '-n', '-y', 'cache_hit', 'cache_hits', 'cache_miss', 'cache_misses', 'cache_stale', 'generate', 'generations', 'show', 'spec_name', 'success', 'successes', 'total_entries', 'verify', '✓', '✓ success', '✗', '✗ failure']

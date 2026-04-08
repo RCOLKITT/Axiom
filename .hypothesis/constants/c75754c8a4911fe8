@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/spec/parser.py
+# hypothesis_version: 6.151.11
+
+[200, '.axiom', '/', '; ', '<string>', 'GET', 'Parsing spec file', 'axiom', 'body', 'constraints', 'dependencies', 'description', 'errors', 'examples', 'expected_output', 'fields', 'function_name', 'intent', 'interface', 'invariants', 'max_response_time_ms', 'metadata', 'method', 'name', 'parameters', 'path', 'path_parameters', 'performance', 'problem_mark', 'python:fastapi', 'query_parameters', 'request_body', 'response', 'returns', 'status', 'success', 'utf-8']

@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/build_cmd.py
+# hypothesis_version: 6.151.11
+
+['--force', '--model', '--output', '--verify/--no-verify', '-f', '-m', '-o', 'Verification failed', '_verified', 'spec_path', 'utf-8', 'verbose']

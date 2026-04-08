@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/security/provenance.py
+# hypothesis_version: 6.151.11
+
+[',', ':', 'USER', 'USERNAME', 'a', 'action', 'axiom_version', 'cache_hit', 'cache_hits', 'cache_miss', 'cache_misses', 'cache_stale', 'config', 'duration_ms', 'failure', 'failure_reason', 'failures', 'generate', 'generations', 'git', 'metadata', 'model', 'result', 'spec_hash', 'spec_name', 'success', 'successes', 'timestamp', 'total_entries', 'user', 'user.name', 'utf-8', 'verifications', 'verify']

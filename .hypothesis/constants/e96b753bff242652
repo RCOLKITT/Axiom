@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/verify/http_runner.py
+# hypothesis_version: 6.151.11
+
+[200, 300, 1000, '.py', 'HTTP example result', 'PATCH', 'POST', 'PUT', '_', 'detail', 'json', 'msg', 'params', 'router', 'utf-8', 'w']

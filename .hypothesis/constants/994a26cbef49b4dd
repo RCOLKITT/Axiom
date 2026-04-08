@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/verify_cmd.py
+# hypothesis_version: 6.151.11
+
+['*.axiom', '--code', '--max-examples', '-c', '-n', 'Docker', 'Run example tests', 'Run invariant tests', 'Unexpected error', 'Verification failed', 'expected_output', 'input', 'name', 'spec_dir', 'spec_path', 'specs', 'subprocess', 'utf-8', 'verbose', 'verify-all', '✓', '✗']

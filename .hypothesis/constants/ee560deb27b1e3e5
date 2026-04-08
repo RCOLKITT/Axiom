@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/codegen/prompt_builder.py
+# hypothesis_version: 6.151.11
+
+['  (no parameters)', '  Errors:', ' (optional)', ' (required)', ', ', 'Path Parameters:', 'Query Parameters:', 'Request Body (JSON):', 'Request:', 'Request: (no body)', 'Response:', 'function', 'python:fastapi', 'python:function', 'router']

@@ -310,9 +310,7 @@ class ProvenanceLog:
         logger.info("Cleared provenance log", entries=count)
         return count
 
-    def get_cost_stats(
-        self, since: datetime | None = None
-    ) -> dict[str, object]:
+    def get_cost_stats(self, since: datetime | None = None) -> dict[str, object]:
         """Get cost statistics from the provenance log.
 
         Args:
@@ -371,9 +369,7 @@ class ProvenanceLog:
             "total_input_tokens": total_input,
             "total_output_tokens": total_output,
             "generation_count": gen_count,
-            "avg_cost_per_generation": (
-                round(total_cost / gen_count, 4) if gen_count > 0 else 0.0
-            ),
+            "avg_cost_per_generation": (round(total_cost / gen_count, 4) if gen_count > 0 else 0.0),
             "cost_by_spec": cost_by_spec,
         }
 
@@ -440,9 +436,7 @@ MODEL_PRICING: dict[str, dict[str, float]] = {
 }
 
 
-def estimate_cost(
-    model: str, input_tokens: int, output_tokens: int
-) -> float:
+def estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
     """Estimate cost for an API call.
 
     Args:

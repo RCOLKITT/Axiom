@@ -74,68 +74,78 @@ def generate_runtime_monitor(spec: Spec, strict: bool = True) -> str:
         code_parts.append("")
 
     # Generate the decorator
-    code_parts.extend([
-        f"def monitor_{function_name}(strict: bool = {strict}) -> Callable[[F], F]:",
-        f'    """Runtime monitor decorator for {function_name}.',
-        "",
-        "    Validates inputs and outputs against the spec.",
-        "    ",
-        "    Args:",
-        "        strict: If True, raise RuntimeError on violations.",
-        "                If False, just log warnings.",
-        "    ",
-        "    Returns:",
-        "        Decorator function.",
-        '    """',
-        "    def decorator(func: F) -> F:",
-        "        @functools.wraps(func)",
-        "        def wrapper(*args: Any, **kwargs: Any) -> Any:",
-        "            # Build kwargs dict from positional args",
-        f"            param_names = {[p.name for p in params]}",
-        "            all_kwargs = dict(zip(param_names, args))",
-        "            all_kwargs.update(kwargs)",
-        "",
-    ])
+    code_parts.extend(
+        [
+            f"def monitor_{function_name}(strict: bool = {strict}) -> Callable[[F], F]:",
+            f'    """Runtime monitor decorator for {function_name}.',
+            "",
+            "    Validates inputs and outputs against the spec.",
+            "    ",
+            "    Args:",
+            "        strict: If True, raise RuntimeError on violations.",
+            "                If False, just log warnings.",
+            "    ",
+            "    Returns:",
+            "        Decorator function.",
+            '    """',
+            "    def decorator(func: F) -> F:",
+            "        @functools.wraps(func)",
+            "        def wrapper(*args: Any, **kwargs: Any) -> Any:",
+            "            # Build kwargs dict from positional args",
+            f"            param_names = {[p.name for p in params]}",
+            "            all_kwargs = dict(zip(param_names, args))",
+            "            all_kwargs.update(kwargs)",
+            "",
+        ]
+    )
 
     # Add input validation if we have checks
     if input_checks:
-        code_parts.extend([
-            "            # Validate inputs",
-            "            input_violations = _validate_inputs(**all_kwargs)",
-            "            if input_violations:",
-            "                msg = f'Input violations: {input_violations}'",
-            "                if strict:",
-            "                    raise RuntimeError(msg)",
-            "                _monitor_logger.warning(msg)",
-            "",
-        ])
+        code_parts.extend(
+            [
+                "            # Validate inputs",
+                "            input_violations = _validate_inputs(**all_kwargs)",
+                "            if input_violations:",
+                "                msg = f'Input violations: {input_violations}'",
+                "                if strict:",
+                "                    raise RuntimeError(msg)",
+                "                _monitor_logger.warning(msg)",
+                "",
+            ]
+        )
 
     # Call the function
-    code_parts.extend([
-        "            # Call the actual function",
-        "            result = func(*args, **kwargs)",
-        "",
-    ])
+    code_parts.extend(
+        [
+            "            # Call the actual function",
+            "            result = func(*args, **kwargs)",
+            "",
+        ]
+    )
 
     # Add output validation if we have invariants
     if invariant_checks:
-        code_parts.extend([
-            "            # Validate output",
-            "            output_violations = _validate_output(result, all_kwargs)",
-            "            if output_violations:",
-            "                msg = f'Output violations: {output_violations}'",
-            "                if strict:",
-            "                    raise RuntimeError(msg)",
-            "                _monitor_logger.warning(msg)",
-            "",
-        ])
+        code_parts.extend(
+            [
+                "            # Validate output",
+                "            output_violations = _validate_output(result, all_kwargs)",
+                "            if output_violations:",
+                "                msg = f'Output violations: {output_violations}'",
+                "                if strict:",
+                "                    raise RuntimeError(msg)",
+                "                _monitor_logger.warning(msg)",
+                "",
+            ]
+        )
 
-    code_parts.extend([
-        "            return result",
-        "        return wrapper  # type: ignore[return-value]",
-        "    return decorator",
-        "",
-    ])
+    code_parts.extend(
+        [
+            "            return result",
+            "        return wrapper  # type: ignore[return-value]",
+            "    return decorator",
+            "",
+        ]
+    )
 
     return "\n".join(code_parts)
 
@@ -158,8 +168,12 @@ def _generate_input_checks(params: list[Parameter]) -> list[str]:
         # Type checks
         python_type = _type_to_python_check(ptype)
         if python_type:
-            checks.append(f"if '{name}' in kwargs and not isinstance(kwargs['{name}'], {python_type}):")
-            checks.append(f"    violations.append(f'{name} must be {ptype}, got {{type(kwargs[\"{name}\"]).__name__}}')")
+            checks.append(
+                f"if '{name}' in kwargs and not isinstance(kwargs['{name}'], {python_type}):"
+            )
+            checks.append(
+                f"    violations.append(f'{name} must be {ptype}, got {{type(kwargs[\"{name}\"]).__name__}}')"
+            )
 
         # Constraint checks
         if param.constraints:

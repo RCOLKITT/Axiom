@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/doctor_cmd.py
+# hypothesis_version: 6.151.11
+
+['*.axiom', '.axiom-cache/', '.gitignore', '/.axiom-cache', '/generated', 'ANTHROPIC_API_KEY', 'Check Docker status', 'OPENAI_API_KEY', 'axiom.toml', 'docker', 'generated/', 'info']

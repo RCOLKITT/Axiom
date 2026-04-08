@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/provenance_cmd.py
+# hypothesis_version: 6.151.11
+
+[100, '  By action:', '  By result:', '  By spec:', '  Period: All time', '  Tokens:', '%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '--action', '--by-spec', '--limit', '--since', '--yes', '-n', '-y', 'API Cost Statistics:', 'cache_hit', 'cache_hits', 'cache_miss', 'cache_misses', 'cache_stale', 'cost_by_spec', 'generate', 'generations', 'show', 'spec_name', 'success', 'successes', 'total_entries', 'verify', '✓', '✓ success', '✗', '✗ failure']

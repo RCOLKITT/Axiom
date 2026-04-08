@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/spec/models.py
+# hypothesis_version: 6.151.11
+
+[200, 300, 400, 600, '/', '0.1', 'DELETE', 'FastAPIInterface', 'GET', 'PATCH', 'POST', 'PUT', 'Spec', '_', 'after', 'axiom', 'dict', 'expected_output', 'function_name', 'input', 'message_contains', 'name', 'path', 'postcondition', 'precondition', 'python:fastapi', 'python:function', 'raises', 'status']

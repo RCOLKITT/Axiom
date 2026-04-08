@@ -188,6 +188,7 @@ def _translate_to_z3(
 
     # Replace input['x'] with input_x
     import re
+
     for name in param_types:
         expr = re.sub(rf"input\[(['\"]){name}\1\]", f"input_{name}", expr)
 
@@ -263,12 +264,14 @@ def _parse_simple_expr(z3: Any, expr: str, context: dict[str, Any]) -> Any:
         return None
 
     # Handle comparisons
-    for op, z3_op in [("==", lambda a, b: a == b),
-                       ("!=", lambda a, b: a != b),
-                       (">=", lambda a, b: a >= b),
-                       ("<=", lambda a, b: a <= b),
-                       (">", lambda a, b: a > b),
-                       ("<", lambda a, b: a < b)]:
+    for op, z3_op in [
+        ("==", lambda a, b: a == b),
+        ("!=", lambda a, b: a != b),
+        (">=", lambda a, b: a >= b),
+        ("<=", lambda a, b: a <= b),
+        (">", lambda a, b: a > b),
+        ("<", lambda a, b: a < b),
+    ]:
         if op in expr:
             parts = expr.split(op, 1)
             if len(parts) == 2:
@@ -317,8 +320,9 @@ def _parse_value(z3: Any, val_str: str, context: dict[str, Any]) -> Any:
         return z3.BoolVal(False)
 
     # Try to parse as string literal
-    if (val_str.startswith('"') and val_str.endswith('"')) or \
-       (val_str.startswith("'") and val_str.endswith("'")):
+    if (val_str.startswith('"') and val_str.endswith('"')) or (
+        val_str.startswith("'") and val_str.endswith("'")
+    ):
         return z3.StringVal(val_str[1:-1])
 
     return None

@@ -85,8 +85,7 @@ def build_all(
     for t in target_list:
         if t not in SUPPORTED_TARGETS:
             raise click.ClickException(
-                f"Unsupported target: {t}. "
-                f"Supported: {', '.join(SUPPORTED_TARGETS)}"
+                f"Unsupported target: {t}. Supported: {', '.join(SUPPORTED_TARGETS)}"
             )
 
     # Determine output base directory

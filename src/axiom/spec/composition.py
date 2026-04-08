@@ -221,8 +221,7 @@ def _merge_specs(child: Spec, parents: list[Spec]) -> Spec:
 
     # Build enhanced intent
     parent_intents = "\n".join(
-        f"Inherits from {p.metadata.name}: {p.metadata.description}"
-        for p in parents
+        f"Inherits from {p.metadata.name}: {p.metadata.description}" for p in parents
     )
     enhanced_intent = f"{parent_intents}\n\n{child.intent}" if parents else child.intent
 
@@ -289,13 +288,13 @@ def get_composition_stats(spec: Spec, parents: list[str]) -> dict[str, int]:
         Dictionary with composition statistics.
     """
     own_examples = sum(
-        1 for ex in spec.examples
-        if not any(ex.name.startswith(f"{p}_") for p in parents)
+        1 for ex in spec.examples if not any(ex.name.startswith(f"{p}_") for p in parents)
     )
     inherited_examples = len(spec.examples) - own_examples
 
     own_invariants = sum(
-        1 for inv in spec.invariants
+        1
+        for inv in spec.invariants
         if not any(inv.description.startswith(f"[{p}]") for p in parents)
     )
     inherited_invariants = len(spec.invariants) - own_invariants

@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/spec/parser.py
+# hypothesis_version: 6.151.11
+
+['.axiom', '; ', '<string>', 'Parsing spec file', 'axiom', 'description', 'examples', 'expected_output', 'function_name', 'intent', 'interface', 'invariants', 'metadata', 'metadata.target', 'name', 'parameters', 'problem_mark', 'python:function', 'returns', 'utf-8']

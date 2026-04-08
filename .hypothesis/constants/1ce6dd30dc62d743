@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/infer/generator.py
+# hypothesis_version: 6.151.11
+
+[0.05, 0.1, 0.2, 1.0, 3.14, 100, '(int, float)', '/nonexistent/path', '/path/to/file', '0.1', '1.0.0', 'Any', 'Args:', 'Error handling:', 'Example:', 'Examples:', 'Note:', 'Notes:', 'Output is never None', 'Raises:', 'Returns:', 'TODO: Add invariant', 'True', '```', '```python', 'array', 'axiom', 'bool', 'boolean', 'check', 'default', 'description', 'dict', 'error_case', 'example', 'examples', 'expected_output', 'float', 'function_name', 'inf', 'input', 'int', 'integer', 'intent', 'interface', 'invariants', 'item1', 'item2', 'key', 'list', 'metadata', 'name', 'none', 'number', 'optional', 'optional[', 'output is not None', 'parameters', 'path', 'python:function', 'raises', 'returns', 'set', 'str', 'string', 'target', 'tuple', 'type', 'utf-8', 'value', 'version', '|']

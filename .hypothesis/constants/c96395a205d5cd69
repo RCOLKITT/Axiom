@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/verify/property_runner.py
+# hypothesis_version: 6.151.11
+
+[100, '.py', '> 0', '>= 0', 'Invariant result', 'No check expression', 'No invariants to run', '__builtins__', 'any', 'bool', 'dict[', 'email', 'float', 'input', 'int', 'list[', 'non-empty', 'output', 'positive', 'str', 'utf-8', 'w']

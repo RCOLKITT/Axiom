@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/init_cmd.py
+# hypothesis_version: 6.151.11
+
+['\n# Axiom\n', '--force', '--name', '-f', '-n', '.', '.axiom-cache', '.axiom-cache/\n', '.gitignore', 'Created: .gitignore', 'Created: axiom.toml', 'Next steps:', 'Updated: .gitignore', 'a', 'axiom.toml', 'generated', 'generated/', 'generated/\n', 'generated/.gitkeep', 'path', 'specs/examples', 'specs/self', 'tests', 'utf-8']

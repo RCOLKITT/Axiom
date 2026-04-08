@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/explain_cmd.py
+# hypothesis_version: 6.151.11
+
+['  Parameters:', '  Request Body:', '-', '--full', '...', '=', 'Any', 'Intent:', 'Interface:', 'Metadata:', 'errors', 'function_name', 'method', 'parameters', 'path', 'performance', 'raises', 'request_body', 'response', 'returns', 'security', 'spec', 'spec_file', 'success', 'type', 'value']

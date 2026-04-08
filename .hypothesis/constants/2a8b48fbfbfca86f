@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cache/store.py
+# hypothesis_version: 6.151.11
+
+[1024, '*.json', '...', 'B', 'Cache HIT', 'Cache MISS', 'Cache STALE', 'Cleared cache', 'Deleted cache entry', 'GB', 'KB', 'MB', 'Stored cache entry', 'axiom_version', 'code', 'created_at', 'entries_by_spec', 'key', 'metadata', 'model', 'no cache entry', 'no entry', 'spec_name', 'target', 'total_entries', 'total_size_bytes', 'total_size_human', 'unique_specs', 'utf-8']

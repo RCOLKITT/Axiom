@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/codegen/post_processor.py
+# hypothesis_version: 6.151.11
+
+['"""', '#', "'''", ', ', '.', '.py', 'Any', 'Callable', 'Dict', 'List', 'Optional', 'Set', 'Tuple', 'Union', 'collections', 'dataclasses', 'datetime', 'format', 'from ', 'functools', 'import ', 'itertools', 'json', 'none', 'os', 'pathlib', 're', 'ruff', 'sys', 'typing', 'utf-8', 'w']

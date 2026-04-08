@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/lint_cmd.py
+# hypothesis_version: 6.151.11
+
+['*.axiom', '+', '+++', '-', '---', '--dry-run', '--fix', '--strict', '1.0.0', '@@', 'cyan', 'fixed', 'green', 'original', 'parameters', 'raises', 'red', 'returns', 'spec_path']

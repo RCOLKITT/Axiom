@@ -285,7 +285,7 @@ def _generate_spec_yaml(spec_data: dict[str, Any]) -> str:
         "metadata:",
         f"  name: {spec_data.get('name', 'unnamed')}",
         "  version: 1.0.0",
-        f"  description: \"{spec_data.get('description', '')}\"",
+        f'  description: "{spec_data.get("description", "")}"',
         '  target: "python:function"',
         "",
         "intent: |",
@@ -305,13 +305,13 @@ def _generate_spec_yaml(spec_data: dict[str, Any]) -> str:
     for param in spec_data.get("parameters", []):
         lines.append(f"    - name: {param.get('name', 'param')}")
         lines.append(f"      type: {param.get('type', 'str')}")
-        lines.append(f"      description: \"{param.get('description', '')}\"")
+        lines.append(f'      description: "{param.get("description", "")}"')
 
     # Add returns
     returns = spec_data.get("returns", {"type": "str", "description": ""})
     lines.append("  returns:")
     lines.append(f"    type: {returns.get('type', 'str')}")
-    lines.append(f"    description: \"{returns.get('description', '')}\"")
+    lines.append(f'    description: "{returns.get("description", "")}"')
 
     # Add examples
     lines.append("")
@@ -335,9 +335,9 @@ def _generate_spec_yaml(spec_data: dict[str, Any]) -> str:
         lines.append("")
         lines.append("invariants:")
         for inv in invariants:
-            lines.append(f"  - description: \"{inv.get('description', '')}\"")
+            lines.append(f'  - description: "{inv.get("description", "")}"')
             if inv.get("check"):
-                lines.append(f"    check: \"{inv.get('check')}\"")
+                lines.append(f'    check: "{inv.get("check")}"')
 
     # Add dependencies if present
     deps = spec_data.get("dependencies", [])

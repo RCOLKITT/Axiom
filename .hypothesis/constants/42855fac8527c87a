@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/new_cmd.py
+# hypothesis_version: 6.151.11
+
+['(.)([A-Z][a-z]+)', '([a-z0-9])([A-Z])', '-', '--description', '--force', '--output-dir', '-d', '-f', '-o', 'Next steps:', '\\1_\\2', '_', 'fastapi', 'function', 'name', 'specs', 'template', 'transformer', 'validator']

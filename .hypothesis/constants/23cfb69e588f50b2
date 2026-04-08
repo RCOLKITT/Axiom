@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/watch_cmd.py
+# hypothesis_version: 6.151.11
+
+[0.5, 1000, '\n\nStopping watch...', '  Verification:', '  → Parsing...', '  → Writing...', ' ✓', '%H:%M:%S', '--clear/--no-clear', '--verify/--no-verify', '.axiom', 'Axiom Watch Mode', 'Verify after build', 'Watch stopped.', 'clear', 'cls', 'error', 'failed', 'nt', 'spec_path', 'utf-8', 'verbose', '─', '═', '✓ Build complete']

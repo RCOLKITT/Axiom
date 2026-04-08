@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/spec/resolver.py
+# hypothesis_version: 6.151.11
+
+[' -> ', '*.axiom', 'Loaded spec', 'Resolved build order']

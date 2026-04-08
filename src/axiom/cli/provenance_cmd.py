@@ -225,9 +225,7 @@ def cost(since: str | None, by_spec: bool) -> None:
         try:
             since_dt = datetime.strptime(since, "%Y-%m-%d")
         except ValueError:
-            raise click.ClickException(
-                f"Invalid date format: {since}. Use YYYY-MM-DD."
-            ) from None
+            raise click.ClickException(f"Invalid date format: {since}. Use YYYY-MM-DD.") from None
 
     cost_stats = prov_log.get_cost_stats(since=since_dt)
 

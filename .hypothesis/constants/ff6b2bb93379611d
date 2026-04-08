@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/sandbox/config.py
+# hypothesis_version: 6.151.11
+
+[0.5, 1.0, 2.0, 120, 128, 256, 1024, '3.12']

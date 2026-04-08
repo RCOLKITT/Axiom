@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/escape/verifier.py
+# hypothesis_version: 6.151.11
+
+[', ', 'async ', 'async function', 'callable', 'hand-written', 'mismatch', 'not found', 'sync function']

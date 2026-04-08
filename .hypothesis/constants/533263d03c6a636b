@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/codegen/generator.py
+# hypothesis_version: 6.151.11
+
+[429, 500, 502, 503, 504, 1000, 4096, 'ANTHROPIC_API_KEY', 'Generation attempt', 'Generation succeeded', 'anthropic', 'content', 'role', 'text', 'user']

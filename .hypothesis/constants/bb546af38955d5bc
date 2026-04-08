@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/main.py
+# hypothesis_version: 6.151.11
+
+['--verbose', '-v', '.env', '__main__', 'axiom', 'debug', 'iso', 'verbose']

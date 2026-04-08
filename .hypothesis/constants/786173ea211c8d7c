@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/lint/fixer.py
+# hypothesis_version: 6.151.11
+
+[3.14, 100, '(int, float)', 'Failed to fix spec', 'Output is valid', 'ValueError', 'array', 'basic_example', 'bool', 'boolean', 'check', 'description', 'dict', 'error_case', 'example', 'examples', 'expected_output', 'float', 'input', 'int', 'integer', 'interface', 'invariants', 'item1', 'item2', 'key', 'list', 'metadata', 'name', 'nan', 'number', 'object', 'optional', 'optional\\[(.+)\\]', 'output is not None', 'parameters', 'raises', 'returns', 'str', 'string', 'utf-8', 'value', '|']

@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/build_cmd.py
+# hypothesis_version: 6.151.11
+
+[1000, '  → Parsing spec...', ' HIT', ' MISS', ' ✓', ' ✓ (still valid)', ' ✗', '#', '--dry-run', '--force', '--local-only', '--model', '--output', '--verify/--no-verify', '-f', '-m', '-o', 'Apache-2.0', 'BSD-3-Clause', 'Build failed', 'GPL-3.0', 'MIT', 'NONE', 'Verification failed', '_verified', 'cache_hit', 'cache_miss', 'cache_stale', 'from ', 'generate', 'import ', 'spec_path', 'success', 'utf-8', 'verbose', '─']

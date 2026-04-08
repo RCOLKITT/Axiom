@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/diff_cmd.py
+# hypothesis_version: 6.151.11
+
+['*.axiom', '+', '+++', '-', '---', '--quiet', '--show-diff', '-q', 'No spec files found.', 'spec_path', 'utf-8']

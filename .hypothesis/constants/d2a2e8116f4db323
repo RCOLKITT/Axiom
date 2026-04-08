@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/cache_cmd.py
+# hypothesis_version: 6.151.11
+
+['  Entries by spec:', '-', '--show-code', '--spec', '--verbose', '--yes', '-s', '-v', '-y', '...', 'Cache statistics:', 'Cached code:', 'Show full cache keys', 'Show the cached code', 'clear', 'entries_by_spec', 'inspect', 'list', 'spec_name', 'stats', 'utf-8']

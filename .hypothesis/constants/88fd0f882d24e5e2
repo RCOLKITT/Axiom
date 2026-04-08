@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/lsp_cmd.py
+# hypothesis_version: 6.151.11
+
+[2087, '--host', '--port', '--stdio', '--tcp', '127.0.0.1', 'Use TCP transport']

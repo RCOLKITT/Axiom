@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/infer/analyzer.py
+# hypothesis_version: 6.151.11
+
+['()', ',', ', ', '...', '=', '[]', '^\\s*(\\w+):', '^\\s*(\\w+):\\s*(.+)', '_', 'cls', 'end_lineno', 'lineno', 'self', 'utf-8', '{}']

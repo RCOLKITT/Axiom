@@ -120,7 +120,7 @@ def create(
     settings = load_settings()
 
     click.echo("Generating spec from description...")
-    click.echo(f"  \"{description}\"")
+    click.echo(f'  "{description}"')
     click.echo("")
 
     # Generate spec using Claude

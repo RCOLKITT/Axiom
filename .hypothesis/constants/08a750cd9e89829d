@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/stats_cmd.py
+# hypothesis_version: 6.151.11
+
+[0.0, 100, '  By action:', '  By target:', '#', '(parse error)', '*.axiom', '*.py', '-', '--json', '0%', '=', 'Cache:', 'Generated Code:', 'N/A', 'Provenance:', 'Specs:', '_', '__pycache__', 'action', 'by_action', 'by_result', 'by_target', 'cache', 'dogfood', 'examples', 'files', 'generated', 'last_7_days', 'lines', 'other', 'output_json', 'percentage', 'provenance', 'result', 'self', 'self_hosting', 'spec_driven_lines', 'specs', 'src/axiom', 'target_percentage', 'timestamp', 'total', 'total_entries', 'total_size_human', 'total_src_lines', 'unique_specs', 'unknown', 'utf-8', '█', '░']

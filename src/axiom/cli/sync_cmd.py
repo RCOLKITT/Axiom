@@ -192,14 +192,10 @@ def _analyze_changes(
 
     # Find function definitions
     cached_funcs = {
-        node.name: node
-        for node in ast.walk(cached_ast)
-        if isinstance(node, ast.FunctionDef)
+        node.name: node for node in ast.walk(cached_ast) if isinstance(node, ast.FunctionDef)
     }
     current_funcs = {
-        node.name: node
-        for node in ast.walk(current_ast)
-        if isinstance(node, ast.FunctionDef)
+        node.name: node for node in ast.walk(current_ast) if isinstance(node, ast.FunctionDef)
     }
 
     func_name = spec.function_name
@@ -214,27 +210,31 @@ def _analyze_changes(
         new_params = current_params - cached_params
 
         for param in new_params:
-            suggestions.append({
-                "type": "new_parameter",
-                "description": f"New parameter detected: {param}",
-                "yaml_snippet": f"""- name: {param}
+            suggestions.append(
+                {
+                    "type": "new_parameter",
+                    "description": f"New parameter detected: {param}",
+                    "yaml_snippet": f"""- name: {param}
   type: str  # Update with correct type
   description: "TODO: Add description"
 """,
-            })
+                }
+            )
 
         # Check for return type changes (via type annotations)
         if current_func.returns and cached_func.returns:
             if ast.dump(current_func.returns) != ast.dump(cached_func.returns):
                 new_type = _get_type_annotation_str(current_func.returns)
-                suggestions.append({
-                    "type": "return_type_change",
-                    "description": f"Return type may have changed to: {new_type}",
-                    "yaml_snippet": f"""returns:
+                suggestions.append(
+                    {
+                        "type": "return_type_change",
+                        "description": f"Return type may have changed to: {new_type}",
+                        "yaml_snippet": f"""returns:
   type: {new_type}
   description: "TODO: Verify description"
 """,
-                })
+                    }
+                )
 
         # Check for new exception handling
         cached_raises = _find_raises(cached_func)
@@ -242,27 +242,31 @@ def _analyze_changes(
         new_raises = current_raises - cached_raises
 
         for exc in new_raises:
-            suggestions.append({
-                "type": "new_exception",
-                "description": f"New exception raised: {exc}",
-                "yaml_snippet": f"""- name: raises_{exc.lower()}
+            suggestions.append(
+                {
+                    "type": "new_exception",
+                    "description": f"New exception raised: {exc}",
+                    "yaml_snippet": f"""- name: raises_{exc.lower()}
   input:
     # TODO: Add input that triggers this exception
   expected_output:
     raises: {exc}
 """,
-            })
+                }
+            )
 
         # Check for docstring changes that might indicate new behavior
         cached_doc = ast.get_docstring(cached_func)
         current_doc = ast.get_docstring(current_func)
 
         if current_doc and current_doc != cached_doc:
-            suggestions.append({
-                "type": "docstring_change",
-                "description": "Docstring changed - intent may need updating",
-                "yaml_snippet": None,
-            })
+            suggestions.append(
+                {
+                    "type": "docstring_change",
+                    "description": "Docstring changed - intent may need updating",
+                    "yaml_snippet": None,
+                }
+            )
 
     return suggestions
 

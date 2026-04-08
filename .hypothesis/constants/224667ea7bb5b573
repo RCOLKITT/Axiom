@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/create_cmd.py
+# hypothesis_version: 6.151.11
+
+[2000, '--build', '--name', '--output', '--verify', '-m', '-n', '-o', 'Build failed', 'Spec summary:', '```', 'axiom.cli.main', 'build', 'content', 'description', 'role', 'text', 'user', 'utf-8']

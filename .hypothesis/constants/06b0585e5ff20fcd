@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/verify/interactive.py
+# hypothesis_version: 6.151.11
+
+[0.1, 0.8, '   Diff:', '   Input:', '   Suggestions:', 'Add more examples', 'Counterexample found', 'Invariant violated', 'None', 'Regenerate code', 'Type mismatch', 'actual', 'check_spec', 'example', 'expected', 'invariant', 'performance', 'regenerate', 'update_spec', '·', '→', '─', '✗']

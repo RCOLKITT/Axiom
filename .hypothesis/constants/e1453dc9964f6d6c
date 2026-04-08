@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/sandbox/docker.py
+# hypothesis_version: 6.151.11
+
+[300, 1000, '--network=none', '--read-only', '--rm', '--tmpfs', '-e', '-v', '-w', '/tmp:size=64m', '/workspace', '/workspace/main.py', 'Timeout', 'docker', 'image', 'info', 'inspect', 'main.py', 'pull', 'python', 'run']

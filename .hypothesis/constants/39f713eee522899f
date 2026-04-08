@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/cli/infer_cmd.py
+# hypothesis_version: 6.151.11
+
+['  Generated spec:', '  Warnings:', '*.py', ', ', '--dry-run', '--force', '--function', '--output-dir', '-f', '-o', '.py', 'Next steps:', '_', '__pycache__', 'infer-all', 'source_dir', 'source_file', 'specs', 'test', '─']

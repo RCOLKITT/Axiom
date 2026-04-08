@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/config/settings.py
+# hypothesis_version: 6.151.11
+
+[0.0, 100, 120, '.axiom-cache', '0.1.0', 'ANTHROPIC_API_KEY', 'INFO', 'Loaded config', 'OPENAI_API_KEY', 'anthropic', 'axiom', 'axiom.toml', 'cache', 'config_path', 'console', 'content-hash', 'generated', 'generation', 'logging', 'openai', 'project', 'python:function', 'rb', 'specs', 'verification']

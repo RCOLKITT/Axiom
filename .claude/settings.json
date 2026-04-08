@@ -1,0 +1,67 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Edit(**)",
+      "Write(src/**)",
+      "Write(tests/**)",
+      "Write(specs/**)",
+      "Write(docs/**)",
+      "Write(generated/**)",
+      "Bash(uv run *)",
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)"
+    ],
+    "deny": [
+      "Write(.env)",
+      "Write(**/*.key)",
+      "Write(**/*secret*)",
+      "Bash(rm -rf *)",
+      "Bash(curl * | bash)",
+      "Bash(pip install*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=\"$TOOL_INPUT_PATH\"; if [[ \"$FILE\" == *.py ]]; then uv run ruff format \"$FILE\" 2>/dev/null; uv run ruff check --fix \"$FILE\" 2>/dev/null; fi'",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=\"$TOOL_INPUT_PATH\"; if [[ \"$FILE\" == generated/* ]] && [[ \"$TOOL_INPUT_CONTENT\" != *\"# AXIOM GENERATED\"* ]]; then echo \"BLOCKED: Direct write to generated/ without AXIOM GENERATED header\" >&2; exit 2; fi'",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'echo \"\\n🔍 Running quality checks...\"; ERRORS=0; uv run ruff check src/ 2>&1 || ERRORS=$((ERRORS+1)); uv run mypy src/ --ignore-missing-imports 2>&1 || ERRORS=$((ERRORS+1)); if [ $ERRORS -gt 0 ]; then echo \"⚠️  Quality issues detected. Consider fixing before moving on.\"; fi'",
+            "timeout": 60000
+          }
+        ]
+      }
+    ]
+  }
+}

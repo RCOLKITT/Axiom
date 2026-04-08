@@ -1,0 +1,126 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Axiom",
+  "scopeName": "source.axiom",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#top-level-keys" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#booleans" },
+    { "include": "#null" },
+    { "include": "#types" },
+    { "include": "#keywords" },
+    { "include": "#markers" }
+  ],
+  "repository": {
+    "comments": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.axiom"
+    },
+    "top-level-keys": {
+      "patterns": [
+        {
+          "match": "^(axiom|metadata|intent|interface|examples|invariants|dependencies):",
+          "captures": {
+            "1": { "name": "keyword.control.axiom" }
+          }
+        },
+        {
+          "match": "^\\s+(name|version|description|target|tags|model|function_name|parameters|returns|raises|http|method|path|request_body|response|errors|check|property|type|default|constraints):",
+          "captures": {
+            "1": { "name": "entity.name.tag.axiom" }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.axiom",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.axiom",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.axiom",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.axiom",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.unquoted.block.axiom",
+          "begin": "[|>][+-]?\\s*$",
+          "end": "^(?=\\S)",
+          "patterns": [
+            {
+              "name": "string.unquoted.axiom",
+              "match": ".*"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "match": "\\b[0-9]+(\\.[0-9]+)?\\b",
+      "name": "constant.numeric.axiom"
+    },
+    "booleans": {
+      "match": "\\b(true|false|True|False)\\b",
+      "name": "constant.language.boolean.axiom"
+    },
+    "null": {
+      "match": "\\b(null|None|~)\\b",
+      "name": "constant.language.null.axiom"
+    },
+    "types": {
+      "patterns": [
+        {
+          "match": "\\b(str|int|float|bool|list|dict|tuple|Any|None|Optional)\\b",
+          "name": "support.type.axiom"
+        },
+        {
+          "match": "\\b(python:function|python:fastapi|python:class|typescript:function)\\b",
+          "name": "support.type.target.axiom"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "match": "\\b(spec|hand-written|external-package)\\b",
+          "name": "keyword.other.dependency-type.axiom"
+        },
+        {
+          "match": "\\b(GET|POST|PUT|DELETE|PATCH)\\b",
+          "name": "keyword.other.http-method.axiom"
+        },
+        {
+          "match": "\\b(raises|message_contains|value)\\b",
+          "name": "keyword.other.assertion.axiom"
+        }
+      ]
+    },
+    "markers": {
+      "patterns": [
+        {
+          "match": "#\\s*AXIOM:(PROTECTED:(BEGIN|END)(:\\w+)?)",
+          "name": "meta.annotation.axiom",
+          "captures": {
+            "1": { "name": "keyword.control.axiom" }
+          }
+        }
+      ]
+    }
+  }
+}

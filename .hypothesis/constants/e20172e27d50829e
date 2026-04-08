@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/verify/reporter.py
+# hypothesis_version: 6.151.11
+
+['  Failures:', '...', '=', 'FAILED', 'Failed specs:', 'PASSED', '✓', '✗']

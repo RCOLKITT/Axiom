@@ -1,0 +1,4 @@
+# file: /Users/ryancolkitt/Axiom/src/axiom/_generated.py
+# hypothesis_version: 6.151.11
+
+[0.1, 0.8, 'None', 'compute_spec_hash', 'format_value', 'generated', 'is_close_value', 'utf-8']
