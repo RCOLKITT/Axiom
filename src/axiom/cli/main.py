@@ -20,6 +20,7 @@ from axiom.cli.build_all_cmd import build_all
 from axiom.cli.build_cmd import build
 from axiom.cli.cache_cmd import cache
 from axiom.cli.create_cmd import create
+from axiom.cli.decompose_cmd import decompose
 from axiom.cli.diff_cmd import diff
 from axiom.cli.doctor_cmd import doctor
 from axiom.cli.explain_cmd import explain
@@ -99,6 +100,7 @@ def cli(ctx: click.Context, verbose: bool) -> None:
 cli.add_command(init)
 cli.add_command(new)
 cli.add_command(create)
+cli.add_command(decompose)
 cli.add_command(build)
 cli.add_command(build_all)
 cli.add_command(verify)
