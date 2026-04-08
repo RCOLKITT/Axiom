@@ -262,9 +262,9 @@ def decompose(
                         text=True,
                     )
                     if result.returncode != 0:
-                        click.echo(f"    ✗ Build failed")
+                        click.echo("    ✗ Build failed")
                     else:
-                        click.echo(f"    ✓ Built")
+                        click.echo("    ✓ Built")
 
     except anthropic.APIError as e:
         raise click.ClickException(f"API error: {e}") from None
@@ -373,9 +373,7 @@ def _yaml_value(value: object) -> str:
         return "true" if value else "false"
     elif isinstance(value, (int, float)):
         return str(value)
-    elif isinstance(value, list):
-        return json.dumps(value)
-    elif isinstance(value, dict):
+    elif isinstance(value, (list, dict)):
         return json.dumps(value)
     elif value is None:
         return "null"

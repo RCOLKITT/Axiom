@@ -13,7 +13,6 @@ from pathlib import Path
 import click
 import structlog
 
-from axiom.config import load_settings
 from axiom.spec import parse_spec_file
 from axiom.verify.formal import can_verify_formally, verify_formally
 

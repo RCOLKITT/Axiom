@@ -31,7 +31,7 @@ from axiom.spec.models import (
 )
 
 if TYPE_CHECKING:
-    from axiom.config.settings import Settings
+    pass
 
 logger = structlog.get_logger()
 
@@ -84,7 +84,7 @@ def resolve_extends(
     # Check for cycles
     if spec.metadata.name in resolved_cache:
         raise CompositionError(
-            f"Circular inheritance detected",
+            "Circular inheritance detected",
             spec.metadata.name,
         )
 

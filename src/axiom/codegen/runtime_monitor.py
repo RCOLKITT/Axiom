@@ -37,9 +37,7 @@ def generate_runtime_monitor(spec: Spec, strict: bool = True) -> str:
 
     # Generate the monitor decorator code
     code_parts = [
-        '"""Runtime monitor for {name} - auto-generated from spec."""'.format(
-            name=function_name
-        ),
+        f'"""Runtime monitor for {function_name} - auto-generated from spec."""',
         "",
         "import functools",
         "import logging",

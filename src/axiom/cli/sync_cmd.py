@@ -20,7 +20,6 @@ import structlog
 from axiom.cache import AXIOM_VERSION, CacheStore
 from axiom.config import load_settings
 from axiom.spec import parse_spec_file
-from axiom.spec.models import Example, ExpectedOutput, Invariant
 
 logger = structlog.get_logger()
 

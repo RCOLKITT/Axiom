@@ -18,13 +18,12 @@ from axiom.cache import AXIOM_VERSION, CacheStore
 from axiom.codegen.generator import generate_code
 from axiom.codegen.post_processor import post_process
 from axiom.config import load_settings
-from axiom.errors import AxiomError
 from axiom.security.scanner import scan_spec_file
 from axiom.spec import parse_spec_file
 from axiom.spec.models import Metadata, Spec
 
 if TYPE_CHECKING:
-    from axiom.config.settings import Settings
+    pass
 
 logger = structlog.get_logger()
 
@@ -184,8 +183,8 @@ def build_all(
     total_success = 0
     total_attempts = 0
 
-    for spec_name, target_results in results.items():
-        for target, status in target_results.items():
+    for _spec_name, target_results in results.items():
+        for _target, status in target_results.items():
             total_attempts += 1
             if status == "success":
                 total_success += 1
