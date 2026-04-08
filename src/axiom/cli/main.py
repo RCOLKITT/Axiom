@@ -18,6 +18,7 @@ except ImportError:
 from axiom import __version__
 from axiom.cli.build_cmd import build
 from axiom.cli.cache_cmd import cache
+from axiom.cli.diff_cmd import diff
 from axiom.cli.doctor_cmd import doctor
 from axiom.cli.explain_cmd import explain
 from axiom.cli.infer_cmd import infer, infer_all
@@ -102,6 +103,7 @@ cli.add_command(infer_all)
 cli.add_command(cache)
 cli.add_command(provenance)
 cli.add_command(lsp)
+cli.add_command(diff)
 cli.add_command(doctor)
 cli.add_command(stats)
 cli.add_command(explain)

@@ -36,6 +36,9 @@ class ProvenanceEntry:
         failure_reason: Reason for failure (if result is "failure").
         user: Username from git config or environment (if available).
         metadata: Additional metadata about the event.
+        input_tokens: Number of input tokens used (for cost tracking).
+        output_tokens: Number of output tokens generated (for cost tracking).
+        cost_usd: Estimated cost in USD (for cost tracking).
     """
 
     timestamp: str
@@ -49,6 +52,9 @@ class ProvenanceEntry:
     failure_reason: str | None = None
     user: str | None = None
     metadata: dict[str, str] | None = None
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    cost_usd: float | None = None
 
     def to_json_line(self) -> str:
         """Serialize to a JSON line (no newlines in output).
@@ -87,6 +93,9 @@ class ProvenanceEntry:
             failure_reason=data.get("failure_reason"),
             user=data.get("user"),
             metadata=data.get("metadata"),
+            input_tokens=data.get("input_tokens"),
+            output_tokens=data.get("output_tokens"),
+            cost_usd=data.get("cost_usd"),
         )
 
 
@@ -301,6 +310,73 @@ class ProvenanceLog:
         logger.info("Cleared provenance log", entries=count)
         return count
 
+    def get_cost_stats(
+        self, since: datetime | None = None
+    ) -> dict[str, object]:
+        """Get cost statistics from the provenance log.
+
+        Args:
+            since: Only include entries after this timestamp.
+
+        Returns:
+            Dictionary with cost statistics.
+        """
+        if not self.log_path.exists():
+            return {
+                "total_cost_usd": 0.0,
+                "total_input_tokens": 0,
+                "total_output_tokens": 0,
+                "generation_count": 0,
+                "avg_cost_per_generation": 0.0,
+            }
+
+        total_cost = 0.0
+        total_input = 0
+        total_output = 0
+        gen_count = 0
+        cost_by_spec: dict[str, float] = {}
+
+        with open(self.log_path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+
+                try:
+                    entry = ProvenanceEntry.from_json_line(line)
+                except (json.JSONDecodeError, KeyError):
+                    continue
+
+                # Filter by time
+                if since:
+                    entry_time = datetime.fromisoformat(entry.timestamp)
+                    if entry_time < since:
+                        continue
+
+                # Only count generations with cost data
+                if entry.action == "generate":
+                    gen_count += 1
+                    if entry.cost_usd:
+                        total_cost += entry.cost_usd
+                        cost_by_spec[entry.spec_name] = (
+                            cost_by_spec.get(entry.spec_name, 0.0) + entry.cost_usd
+                        )
+                    if entry.input_tokens:
+                        total_input += entry.input_tokens
+                    if entry.output_tokens:
+                        total_output += entry.output_tokens
+
+        return {
+            "total_cost_usd": round(total_cost, 4),
+            "total_input_tokens": total_input,
+            "total_output_tokens": total_output,
+            "generation_count": gen_count,
+            "avg_cost_per_generation": (
+                round(total_cost / gen_count, 4) if gen_count > 0 else 0.0
+            ),
+            "cost_by_spec": cost_by_spec,
+        }
+
 
 def create_provenance_entry(
     spec_name: str,
@@ -312,6 +388,9 @@ def create_provenance_entry(
     duration_ms: int | None = None,
     failure_reason: str | None = None,
     metadata: dict[str, str] | None = None,
+    input_tokens: int | None = None,
+    output_tokens: int | None = None,
+    cost_usd: float | None = None,
 ) -> ProvenanceEntry:
     """Create a provenance entry with automatic timestamp and user.
 
@@ -325,6 +404,9 @@ def create_provenance_entry(
         duration_ms: Duration in milliseconds.
         failure_reason: Reason for failure.
         metadata: Additional metadata.
+        input_tokens: Number of input tokens used.
+        output_tokens: Number of output tokens generated.
+        cost_usd: Estimated cost in USD.
 
     Returns:
         ProvenanceEntry ready to be logged.
@@ -341,4 +423,37 @@ def create_provenance_entry(
         failure_reason=failure_reason,
         user=get_current_user(),
         metadata=metadata,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        cost_usd=cost_usd,
     )
+
+
+# Model pricing (per 1M tokens) - Updated April 2026
+MODEL_PRICING: dict[str, dict[str, float]] = {
+    "claude-sonnet-4-20250514": {"input": 3.00, "output": 15.00},
+    "claude-opus-4-20250514": {"input": 15.00, "output": 75.00},
+    "claude-haiku-4-5-20251001": {"input": 0.80, "output": 4.00},
+    "claude-3-5-sonnet-20241022": {"input": 3.00, "output": 15.00},
+    "claude-3-opus-20240229": {"input": 15.00, "output": 75.00},
+    "claude-3-haiku-20240307": {"input": 0.25, "output": 1.25},
+}
+
+
+def estimate_cost(
+    model: str, input_tokens: int, output_tokens: int
+) -> float:
+    """Estimate cost for an API call.
+
+    Args:
+        model: Model name.
+        input_tokens: Number of input tokens.
+        output_tokens: Number of output tokens.
+
+    Returns:
+        Estimated cost in USD.
+    """
+    pricing = MODEL_PRICING.get(model, {"input": 3.00, "output": 15.00})
+    input_cost = (input_tokens / 1_000_000) * pricing["input"]
+    output_cost = (output_tokens / 1_000_000) * pricing["output"]
+    return round(input_cost + output_cost, 6)

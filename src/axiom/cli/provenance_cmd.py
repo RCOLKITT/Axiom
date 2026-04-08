@@ -201,6 +201,67 @@ def stats() -> None:
 
 
 @provenance.command()
+@click.option(
+    "--since",
+    help="Show costs since date (YYYY-MM-DD)",
+)
+@click.option("--by-spec", is_flag=True, help="Show breakdown by spec")
+def cost(since: str | None, by_spec: bool) -> None:
+    """Show API cost statistics.
+
+    \\b
+    Examples:
+      axiom provenance cost
+      axiom provenance cost --since 2026-04-01
+      axiom provenance cost --by-spec
+    """
+    settings = load_settings()
+    log_path = settings.get_provenance_log_path()
+    prov_log = ProvenanceLog(log_path)
+
+    # Parse since date if provided
+    since_dt: datetime | None = None
+    if since:
+        try:
+            since_dt = datetime.strptime(since, "%Y-%m-%d")
+        except ValueError:
+            raise click.ClickException(
+                f"Invalid date format: {since}. Use YYYY-MM-DD."
+            ) from None
+
+    cost_stats = prov_log.get_cost_stats(since=since_dt)
+
+    click.echo("API Cost Statistics:")
+    click.echo("")
+    if since:
+        click.echo(f"  Period: Since {since}")
+    else:
+        click.echo("  Period: All time")
+    click.echo("")
+    click.echo(f"  Total cost: ${cost_stats['total_cost_usd']:.4f}")
+    click.echo(f"  Generations: {cost_stats['generation_count']}")
+    click.echo(f"  Avg per generation: ${cost_stats['avg_cost_per_generation']:.4f}")
+    click.echo("")
+    click.echo("  Tokens:")
+    click.echo(f"    Input: {cost_stats['total_input_tokens']:,}")
+    click.echo(f"    Output: {cost_stats['total_output_tokens']:,}")
+
+    cost_by_spec = cost_stats.get("cost_by_spec")
+    if by_spec and isinstance(cost_by_spec, dict) and cost_by_spec:
+        click.echo("")
+        click.echo("  By spec:")
+        sorted_specs = sorted(
+            cost_by_spec.items(),
+            key=lambda x: x[1],
+            reverse=True,
+        )
+        for spec_name, spec_cost in sorted_specs[:10]:
+            click.echo(f"    {spec_name}: ${spec_cost:.4f}")
+        if len(sorted_specs) > 10:
+            click.echo(f"    ... and {len(sorted_specs) - 10} more")
+
+
+@provenance.command()
 @click.option("--yes", "-y", is_flag=True, help="Skip confirmation prompt")
 def clear(yes: bool) -> None:
     """Clear the provenance log.

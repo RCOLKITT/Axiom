@@ -1,0 +1,84 @@
+name: 'Axiom Verify'
+description: 'Verify Axiom specs in CI - ensures generated code matches specifications'
+author: 'Vaspera Capital'
+branding:
+  icon: 'check-circle'
+  color: 'purple'
+
+inputs:
+  spec-path:
+    description: 'Path to specs directory or specific .axiom file'
+    required: false
+    default: 'specs/'
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.12'
+  fail-on-drift:
+    description: 'Fail if generated code has been hand-edited'
+    required: false
+    default: 'true'
+  anthropic-api-key:
+    description: 'Anthropic API key (only needed for --rebuild)'
+    required: false
+  rebuild:
+    description: 'Rebuild specs before verifying (requires API key)'
+    required: false
+    default: 'false'
+
+outputs:
+  passed:
+    description: 'Number of specs that passed verification'
+    value: ${{ steps.verify.outputs.passed }}
+  failed:
+    description: 'Number of specs that failed verification'
+    value: ${{ steps.verify.outputs.failed }}
+  drift-detected:
+    description: 'Whether generated code drift was detected'
+    value: ${{ steps.diff.outputs.drift }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Axiom
+      shell: bash
+      run: pip install axiom-spec
+
+    - name: Check for drift
+      id: diff
+      if: inputs.fail-on-drift == 'true'
+      shell: bash
+      run: |
+        if axiom diff ${{ inputs.spec-path }} --quiet; then
+          echo "drift=false" >> $GITHUB_OUTPUT
+          echo "✓ No drift detected in generated code"
+        else
+          echo "drift=true" >> $GITHUB_OUTPUT
+          echo "::error::Generated code has been modified. Run 'axiom build' to regenerate."
+          exit 1
+        fi
+
+    - name: Rebuild specs
+      if: inputs.rebuild == 'true'
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+      run: axiom build ${{ inputs.spec-path }}
+
+    - name: Verify specs
+      id: verify
+      shell: bash
+      run: |
+        output=$(axiom verify ${{ inputs.spec-path }} --json 2>&1) || true
+        passed=$(echo "$output" | grep -o '"passed": [0-9]*' | grep -o '[0-9]*' || echo "0")
+        failed=$(echo "$output" | grep -o '"failed": [0-9]*' | grep -o '[0-9]*' || echo "0")
+        echo "passed=$passed" >> $GITHUB_OUTPUT
+        echo "failed=$failed" >> $GITHUB_OUTPUT
+
+        # Run verify and let it exit with proper code
+        axiom verify ${{ inputs.spec-path }}
