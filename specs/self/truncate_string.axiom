@@ -20,6 +20,7 @@ interface:
     - name: max_length
       type: int
       description: "Maximum length including ellipsis"
+      constraints: ">= 0"
     - name: ellipsis
       type: str
       description: "Ellipsis string to append"
@@ -72,8 +73,8 @@ examples:
     expected_output: ""
 
 invariants:
-  - description: "Output never exceeds max_length"
-    check: "len(output) <= input['max_length']"
+  - description: "Output never exceeds max_length (for valid max_length)"
+    check: "input['max_length'] < 0 or len(output) <= input['max_length']"
 
   - description: "Short strings unchanged"
     check: "output == input['text'] if len(input['text']) <= input['max_length'] else True"
