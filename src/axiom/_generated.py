@@ -39,6 +39,8 @@ try:
     from generated.strip_ansi import strip_ansi
     from generated.topological_sort import topological_sort
     from generated.validate_python_identifier import validate_python_identifier
+    from generated.generate_default_value import generate_default_value
+    from generated.generate_error_value import generate_error_value
 
     _GENERATED_AVAILABLE = True
 except ImportError:
@@ -247,6 +249,41 @@ except ImportError:
             return False
         return True
 
+    def generate_default_value(type_str: str | None) -> object:
+        """Fallback: generate default value for a type."""
+        if type_str is None:
+            return "example"
+        type_lower = type_str.lower()
+        if type_lower in ("str", "string"):
+            return "example"
+        if type_lower in ("int", "integer"):
+            return 42
+        if type_lower == "float":
+            return 3.14
+        if type_lower in ("bool", "boolean"):
+            return True
+        if type_lower == "list":
+            return ["item1", "item2"]
+        if type_lower == "dict":
+            return {"key": "value"}
+        return "example"
+
+    def generate_error_value(type_str: str | None) -> object:
+        """Fallback: generate error-inducing value for a type."""
+        if type_str in ("str", "string"):
+            return ""
+        if type_str in ("int", "integer"):
+            return -1
+        if type_str == "float":
+            return None
+        if type_str == "list":
+            return []
+        if type_str == "dict":
+            return {}
+        if type_str == "path":
+            return "/nonexistent/path"
+        return None
+
 
 __all__ = [
     "camel_to_snake",
@@ -258,6 +295,8 @@ __all__ = [
     "flatten_list",
     "format_duration",
     "format_value",
+    "generate_default_value",
+    "generate_error_value",
     "is_close_value",
     "merge_dicts",
     "normalize_path",
