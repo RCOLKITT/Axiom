@@ -20,17 +20,25 @@ if _generated_dir.exists() and str(_project_root) not in sys.path:
 # Now we can import from generated/
 # These imports will fail if generated/ doesn't exist or specs aren't built
 try:
+    from generated.camel_to_snake import camel_to_snake
     from generated.chunk_list import chunk_list
     from generated.compute_spec_hash import compute_spec_hash
+    from generated.count_lines import count_lines
+    from generated.escape_regex import escape_regex
+    from generated.extract_code import extract_code
     from generated.flatten_list import flatten_list
+    from generated.format_duration import format_duration
     from generated.format_value import format_value
     from generated.is_close_value import is_close_value
     from generated.merge_dicts import merge_dicts
+    from generated.normalize_path import normalize_path
+    from generated.pluralize import pluralize
     from generated.safe_get import safe_get
     from generated.slugify import slugify
     from generated.snake_to_camel import snake_to_camel
     from generated.strip_ansi import strip_ansi
     from generated.topological_sort import topological_sort
+    from generated.validate_python_identifier import validate_python_identifier
 
     _GENERATED_AVAILABLE = True
 except ImportError:
@@ -149,18 +157,116 @@ except ImportError:
                         queue.append(n)
         return result
 
+    def camel_to_snake(name: str) -> str:
+        """Fallback: convert camelCase to snake_case."""
+        import re
+
+        if not name:
+            return ""
+        result = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
+        result = re.sub(r"([A-Z])([A-Z][a-z])", r"\1_\2", result)
+        return result.lower()
+
+    def normalize_path(path: str) -> str:
+        """Fallback: normalize a file path."""
+        import os
+
+        if not path:
+            return ""
+        path = path.replace("\\", "/")
+        normalized = os.path.normpath(path).replace("\\", "/")
+        if normalized != "/" and normalized.endswith("/"):
+            normalized = normalized.rstrip("/")
+        return normalized
+
+    def pluralize(count: int, singular: str, plural: str | None = None) -> str:
+        """Fallback: pluralize a word based on count."""
+        if abs(count) == 1:
+            word = singular
+        else:
+            word = plural if plural is not None else singular + "s"
+        return f"{count} {word}"
+
+    def escape_regex(pattern: str) -> str:
+        """Fallback: escape regex special characters."""
+        import re
+
+        return re.escape(pattern)
+
+    def count_lines(code: str) -> int:
+        """Fallback: count significant lines of code."""
+        if not code.strip():
+            return 0
+        lines = code.split("\n")
+        return sum(1 for line in lines if line.strip() and not line.strip().startswith("#"))
+
+    def format_duration(ms: int) -> str:
+        """Fallback: format duration in milliseconds."""
+        if ms < 0:
+            raise ValueError("Duration cannot be negative")
+        if ms < 1000:
+            return f"{ms}ms"
+        seconds = ms / 1000
+        if seconds < 60:
+            return f"{seconds:.1f}s"
+        minutes = int(seconds // 60)
+        remaining_seconds = int(seconds % 60)
+        if minutes < 60:
+            return f"{minutes}m {remaining_seconds}s"
+        hours = minutes // 60
+        remaining_minutes = minutes % 60
+        return f"{hours}h {remaining_minutes}m"
+
+    def extract_code(response: str) -> str:
+        """Fallback: extract code from LLM response."""
+        import re
+
+        if not response:
+            return ""
+        python_match = re.search(r"```python\s*\n(.*?)\n```", response, re.DOTALL)
+        if python_match:
+            return python_match.group(1).strip()
+        generic_match = re.search(r"```\s*\n(.*?)\n```", response, re.DOTALL)
+        if generic_match:
+            return generic_match.group(1).strip()
+        stripped = response.strip()
+        indicators = ["def ", "class ", "import ", "from ", "return ", "if ", "for ", "while ", "    "]
+        if any(ind in stripped for ind in indicators):
+            return stripped
+        return ""
+
+    def validate_python_identifier(name: str) -> bool:
+        """Fallback: validate Python identifier."""
+        import keyword
+
+        if not name:
+            return False
+        if not name.isidentifier():
+            return False
+        if keyword.iskeyword(name):
+            return False
+        return True
+
 
 __all__ = [
+    "camel_to_snake",
+    "chunk_list",
     "compute_spec_hash",
+    "count_lines",
+    "escape_regex",
+    "extract_code",
+    "flatten_list",
+    "format_duration",
     "format_value",
     "is_close_value",
-    "chunk_list",
-    "flatten_list",
-    "safe_get",
     "merge_dicts",
+    "normalize_path",
+    "pluralize",
+    "safe_get",
     "slugify",
-    "strip_ansi",
     "snake_to_camel",
+    "strip_ansi",
     "topological_sort",
+    "validate_python_identifier",
     "_GENERATED_AVAILABLE",
 ]
