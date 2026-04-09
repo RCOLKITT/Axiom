@@ -389,11 +389,10 @@ def _values_match(expected: Any, actual: Any) -> bool:
     if expected is None and actual is None:
         return True
 
-    # Numeric tolerance
+    # Numeric tolerance (matches Python's math.isclose defaults)
     if isinstance(expected, (int, float)) and isinstance(actual, (int, float)):
-        if expected == 0:
-            return abs(actual) < 1e-9
-        return abs(expected - actual) / abs(expected) < 1e-6
+        # Use both relative (1e-9) and absolute (1e-9) tolerance
+        return abs(expected - actual) <= max(1e-9 * max(abs(expected), abs(actual)), 1e-9)
 
     # String comparison
     if isinstance(expected, str) and isinstance(actual, str):

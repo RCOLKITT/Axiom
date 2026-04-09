@@ -292,8 +292,10 @@ def _run_check_invariant(
             return
 
         # Evaluate the check expression
+        # SECURITY: eval() with restricted builtins. Check expressions come from
+        # .axiom spec files (developer-written, version-controlled, reviewed).
+        # __builtins__ is restricted to safe functions only.
         try:
-            # Create evaluation context with safe builtins
             safe_builtins = {
                 "all": all,
                 "any": any,

@@ -288,9 +288,10 @@ def _values_equal(actual: Any, expected: Any) -> bool:
     if actual == expected:
         return True
 
-    # Handle float comparison
-    if isinstance(actual, float) and isinstance(expected, float):
-        return abs(actual - expected) < 1e-9
+    # Handle float comparison (consistent with TypeScript runner)
+    if isinstance(actual, (int, float)) and isinstance(expected, (int, float)):
+        # Use both relative (1e-9) and absolute (1e-9) tolerance
+        return abs(expected - actual) <= max(1e-9 * max(abs(expected), abs(actual)), 1e-9)
 
     # Handle list/tuple comparison
     if isinstance(actual, (list, tuple)) and isinstance(expected, (list, tuple)):
