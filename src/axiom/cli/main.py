@@ -31,6 +31,7 @@ from axiom.cli.lsp_cmd import lsp
 from axiom.cli.new_cmd import new
 from axiom.cli.prove_cmd import prove
 from axiom.cli.provenance_cmd import provenance
+from axiom.cli.quickstart_cmd import quickstart
 from axiom.cli.score_cmd import score_command
 from axiom.cli.stats_cmd import stats
 from axiom.cli.sync_cmd import sync
@@ -88,6 +89,7 @@ def cli(ctx: click.Context, verbose: bool) -> None:
 
     \b
     Quick start:
+      axiom quickstart              # Create + build + verify in one command
       axiom init                    # Initialize a new project
       axiom build specs/example.axiom   # Generate code from a spec
       axiom verify specs/example.axiom  # Verify generated code
@@ -98,6 +100,7 @@ def cli(ctx: click.Context, verbose: bool) -> None:
 
 
 # Register commands
+cli.add_command(quickstart)
 cli.add_command(init)
 cli.add_command(new)
 cli.add_command(create)

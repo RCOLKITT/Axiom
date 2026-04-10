@@ -6,12 +6,12 @@ Orchestrates the generation loop: prompt → LLM → extract code → post-proce
 from __future__ import annotations
 
 import os
-import re
 import time
 from typing import TYPE_CHECKING
 
 import structlog
 
+from axiom._generated import extract_code
 from axiom.codegen.prompt_builder import (
     build_retry_prompt,
     build_system_prompt,
@@ -103,7 +103,7 @@ def generate_code(
             )
 
             # Extract and clean code
-            code = _extract_code(raw_response)
+            code = extract_code(raw_response)
 
             duration_ms = int((time.time() - start_time) * 1000)
 
@@ -203,7 +203,7 @@ def generate_with_verification(
                 timeout=settings.generation.timeout_seconds,
             )
 
-            code = _extract_code(raw_response)
+            code = extract_code(raw_response)
 
             # Verify
             success, failures = verify_fn(code)  # type: ignore[operator]
@@ -328,28 +328,3 @@ def _call_llm(
             provider="anthropic",
             retryable=False,
         ) from e
-
-
-def _extract_code(response: str) -> str:
-    """Extract Python code from LLM response.
-
-    Handles responses that may include markdown fences despite instructions.
-
-    Args:
-        response: Raw LLM response.
-
-    Returns:
-        Extracted Python code.
-    """
-    text = response.strip()
-
-    # Check for markdown code blocks
-    code_block_pattern = r"```(?:python)?\s*\n(.*?)```"
-    matches: list[str] = re.findall(code_block_pattern, text, re.DOTALL)
-
-    if matches:
-        # Return the first (or only) code block
-        return matches[0].strip()
-
-    # No code blocks, return as-is (assuming raw code)
-    return text
