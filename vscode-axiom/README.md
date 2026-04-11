@@ -92,8 +92,8 @@ examples:
     expected_output: 5
 
 invariants:
-  - description: "Addition is commutative"
-    check: "add_numbers(a, b) == add_numbers(b, a)"
+  - description: "Output equals sum of inputs"
+    check: "output == input['a'] + input['b']"
 ```
 
 ## Links
