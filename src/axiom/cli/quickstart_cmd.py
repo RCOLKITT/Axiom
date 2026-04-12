@@ -124,6 +124,7 @@ def quickstart(ctx: click.Context, path: str, name: str | None) -> None:
     original_cwd = Path.cwd()
     os.chdir(project_path)
 
+    verify_result = None  # Initialize to handle errors before verification
     try:
         settings = load_settings()
         spec = parse_spec_file(spec_path)
@@ -182,7 +183,9 @@ def quickstart(ctx: click.Context, path: str, name: str | None) -> None:
     # Summary
     total_time = time.time() - start_time
     click.echo("╔════════════════════════════════════════════════════════════╗")
-    if verify_result.success:
+    if verify_result is None:
+        click.echo("║  ❌ Build failed. Check the error above.                    ║")
+    elif verify_result.success:
         click.echo("║  ✅ SUCCESS! Your first spec is built and verified.        ║")
     else:
         click.echo("║  ⚠️  Build complete, but verification failed.              ║")

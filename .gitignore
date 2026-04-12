@@ -16,9 +16,11 @@ node_modules
 .next/
 .DS_Store
 
-# Axiom generated files
-generated/
+# Axiom cache (regenerated on build)
 .axiom-cache/
+
+# Note: generated/ is NOT ignored - we commit spec-driven code for self-hosting
+# This ensures _GENERATED_AVAILABLE=True when users install axiom-spec
 
 # Python
 __pycache__/
