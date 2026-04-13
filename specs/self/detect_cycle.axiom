@@ -8,7 +8,7 @@ metadata:
 
 intent: |
   Check if a directed graph contains any cycles.
-  Returns the cycle path if found, None otherwise.
+  Returns True if a cycle exists, False otherwise.
   Uses DFS to detect back edges.
 
 interface:
@@ -18,43 +18,43 @@ interface:
       type: "dict[str, list[str]]"
       description: "Graph as adjacency list"
   returns:
-    type: "list[str] | None"
-    description: "Cycle path if found, None if acyclic"
+    type: bool
+    description: "True if cycle exists, False if acyclic"
 
 examples:
   - name: simple_cycle
     input:
       graph: {"a": ["b"], "b": ["a"]}
-    expected_output: ["a", "b", "a"]
+    expected_output: true
 
   - name: no_cycle
     input:
       graph: {"a": [], "b": ["a"], "c": ["b"]}
-    expected_output: null
+    expected_output: false
 
   - name: self_loop
     input:
       graph: {"a": ["a"]}
-    expected_output: ["a", "a"]
+    expected_output: true
 
   - name: longer_cycle
     input:
       graph: {"a": ["b"], "b": ["c"], "c": ["a"]}
-    expected_output: ["a", "b", "c", "a"]
+    expected_output: true
 
   - name: empty_graph
     input:
       graph: {}
-    expected_output: null
+    expected_output: false
 
   - name: diamond_no_cycle
     input:
       graph: {"a": [], "b": ["a"], "c": ["a"], "d": ["b", "c"]}
-    expected_output: null
+    expected_output: false
 
 invariants:
-  - description: "If cycle returned, first and last elements match"
-    check: "output is None or (len(output) >= 2 and output[0] == output[-1])"
+  - description: "Returns a boolean"
+    check: "isinstance(output, bool)"
 
-  - description: "If cycle returned, all nodes in cycle are in graph"
-    check: "output is None or all(n in input['graph'] for n in output[:-1])"
+  - description: "Empty graph has no cycle"
+    check: "len(input['graph']) > 0 or output == False"

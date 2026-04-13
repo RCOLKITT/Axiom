@@ -5,49 +5,82 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Specs are source. Code is cache.**
+**Verified AI-generated code.**
 
-Axiom compiles `.axiom` specification files into verified Python code using LLMs. Instead of writing code and hoping it matches your intent, you write executable specifications and Axiom generates code that provably satisfies them.
+Axiom compiles `.axiom` specification files into verified Python code using LLMs. Write executable specs with examples and invariants — Axiom generates code that provably satisfies them.
 
-## The Idea
+## The Problem
+
+AI-generated code is fast but untrustworthy. 45% of developers say debugging AI output takes longer than writing it manually. The issue isn't generating code — it's knowing the code is correct.
+
+## The Solution
 
 ```
-Traditional:  Intent → Code → Tests → Hope they match
-Axiom:        Spec (Intent + Tests) → Code (generated + verified)
+Traditional:  Prompt → AI Code → Hope it works → Debug forever
+Axiom:        Spec (examples + invariants) → Verified Code → Confidence
 ```
 
 Every spec includes:
-- **Intent**: Natural language description of what the code should do
+- **Intent**: What the code should do (natural language)
 - **Interface**: Typed parameters and return values
 - **Examples**: Concrete input/output pairs that must pass
-- **Invariants**: Properties that must hold for all inputs
-
-Axiom generates code that satisfies all assertions, caches the result, and regenerates only when the spec changes.
+- **Invariants**: Properties verified with property-based testing
 
 ## Quick Start
 
-### Install
-
 ```bash
+# Install
 pip install axiom-spec
-```
 
-### Set up API key
-
-```bash
+# Set up API key
 export ANTHROPIC_API_KEY=your-key-here
+
+# Initialize project
+axiom init
+
+# Create and build your first spec
+axiom new validate_email
+axiom build specs/validate_email.axiom --verify
 ```
 
-### Initialize a project
+## Two Workflows
+
+### 1. Spec-First (New Code)
+
+Write the spec, generate verified code:
 
 ```bash
-mkdir my-project && cd my-project
-axiom init
+# Create a spec
+axiom new calculate_discount
+
+# Edit specs/calculate_discount.axiom with your examples and invariants
+
+# Generate code that passes all assertions
+axiom build specs/calculate_discount.axiom --verify
+
+# Check spec quality
+axiom score specs/calculate_discount.axiom
 ```
 
-### Write a spec
+### 2. Verify Existing Code
 
-Create `specs/validate_email.axiom`:
+Already have AI-generated code? Add a verification layer:
+
+```bash
+# Infer a spec from existing code
+axiom infer src/utils/parse_config.py --function parse_config
+
+# Review and edit the generated spec
+# Add examples that capture expected behavior
+# Add invariants for properties you care about
+
+# Verify your existing code passes
+axiom verify specs/parse_config.axiom --code src/utils/parse_config.py
+```
+
+If verification fails, you found a bug. If it passes, you now have a contract for future changes.
+
+## Example Spec
 
 ```yaml
 axiom: "0.1"
@@ -55,23 +88,20 @@ axiom: "0.1"
 metadata:
   name: validate_email
   version: 1.0.0
-  description: "Validates and normalizes email addresses"
+  description: "Validates email addresses"
   target: "python:function"
 
 intent: |
   Takes a string that should be an email address.
-  If valid, returns it lowercased and stripped.
-  If invalid, raises ValueError.
+  Returns it lowercased if valid, raises ValueError if invalid.
 
 interface:
   function_name: validate_email
   parameters:
     - name: email
       type: str
-      description: "The email to validate"
   returns:
     type: str
-    description: "The normalized email"
 
 examples:
   - name: valid_email
@@ -88,54 +118,94 @@ invariants:
     check: "output == output.lower()"
 ```
 
-### Build and verify
-
-```bash
-# Generate code from spec
-axiom build specs/validate_email.axiom
-
-# Verify generated code passes all assertions
-axiom verify specs/validate_email.axiom
-
-# Or do both at once
-axiom build specs/validate_email.axiom --verify
-```
-
-### Use the generated code
-
-```python
-from generated.validate_email import validate_email
-
-email = validate_email("User@Example.com")  # Returns "user@example.com"
-```
-
-## Commands
+## Core Commands
 
 | Command | Description |
 |---------|-------------|
-| `axiom init` | Initialize a new project with config and directories |
-| `axiom build <spec>` | Generate code from a spec file |
-| `axiom verify <spec>` | Run all examples and invariants against generated code |
-| `axiom build <dir>` | Build all specs in a directory (respects dependencies) |
-| `axiom watch` | Watch for spec changes and rebuild automatically |
-| `axiom explain <spec>` | Show human-readable summary of a spec |
-| `axiom stats` | Show project statistics and self-hosting metrics |
-| `axiom cache list` | List cached generations |
-| `axiom cache clear` | Clear the cache |
-| `axiom infer <file.py>` | Generate specs from existing Python code |
+| `axiom build <spec>` | Generate code from spec, verify it passes |
+| `axiom verify <spec>` | Run examples + invariants against code |
+| `axiom score <spec>` | Check spec completeness and quality |
+| `axiom watch <spec>` | Auto-rebuild on spec changes |
+
+### Build and Verify
+
+```bash
+# Generate code
+axiom build specs/validate_email.axiom
+
+# Verify separately
+axiom verify specs/validate_email.axiom
+
+# Or both at once
+axiom build specs/validate_email.axiom --verify
+```
+
+### Score Spec Quality
+
+```bash
+axiom score specs/validate_email.axiom
+
+# Output:
+# validate_email: 85% complete
+# ████████░░ Examples: 4/5 recommended
+# ██████████ Invariants: 2 properties
+# Missing: error case for empty string
+```
+
+## CI/CD Integration
+
+Add verification to your pipeline:
+
+```yaml
+# .github/workflows/verify.yml
+name: Verify Specs
+on: [push, pull_request]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install axiom-spec
+      - run: axiom verify specs/
+```
+
+This ensures:
+- All specs pass after code changes
+- AI-regenerated code meets the contract
+- No silent behavior changes slip through
+
+## All Commands
+
+| Command | Description |
+|---------|-------------|
+| `axiom init` | Initialize a new project |
+| `axiom new <name>` | Create a new spec from template |
+| `axiom build <spec>` | Generate code from spec |
+| `axiom verify <spec>` | Run verification suite |
+| `axiom score <spec>` | Check spec completeness |
+| `axiom watch <spec>` | Auto-rebuild on changes |
+| `axiom infer <file.py>` | Generate spec from existing code |
+| `axiom explain <spec>` | Show human-readable spec summary |
 | `axiom lint <spec>` | Check spec for issues |
-| `axiom lint <spec> --fix` | Auto-fix spec issues |
+| `axiom stats` | Show project statistics |
+| `axiom cache list/clear` | Manage generation cache |
+| `axiom doctor` | Check system configuration |
+
+See [CLI Reference](docs/cli-reference.md) for all options.
 
 ## Features
 
-- **Multi-spec composition**: Specs can depend on other specs
-- **FastAPI support**: Generate complete API endpoints with `target: python:fastapi`
-- **TypeScript support**: Generate TypeScript with `target: typescript:function`
+- **Property-based testing**: Invariants verified with [Hypothesis](https://hypothesis.readthedocs.io/)
+- **Multi-target support**: Python functions, FastAPI endpoints, TypeScript
 - **Deterministic caching**: Same spec = same code, instant rebuilds
-- **Property-based testing**: Invariants verified with Hypothesis
-- **IDE support**: VS Code extension with LSP for .axiom files
-- **Watch mode**: Auto-rebuild on spec changes
 - **Spec inference**: Generate specs from existing Python functions
+- **IDE support**: VS Code extension with LSP
+- **Watch mode**: Auto-rebuild on spec changes
+- **Self-hosting**: 51 functions in Axiom itself are spec-driven
 
 ## Configuration
 
@@ -149,7 +219,6 @@ generated_dir = "generated"
 
 [generation]
 default_model = "claude-sonnet-4-20250514"
-temperature = 0.0
 max_retries = 3
 
 [verification]
@@ -160,29 +229,27 @@ hypothesis_max_examples = 100
 
 ## Philosophy
 
-Traditional development treats code as the source of truth. Documentation drifts, tests become stale, and intent is lost in implementation details.
+Traditional development treats code as source of truth. Documentation drifts, tests become stale, intent is lost.
 
-Axiom inverts this: **specifications are the source of truth**. Code is a cached compilation artifact that can be regenerated anytime. When you change a spec, you change the contract. When you regenerate, you get code that provably satisfies the new contract.
+Axiom inverts this: **specifications are source of truth**. Code is a verified artifact that can be regenerated anytime. When you change a spec, you change the contract. When you regenerate, you get code that provably satisfies it.
 
-This isn't "AI-assisted coding" — it's a fundamental shift in what a codebase is.
+This isn't "AI-assisted coding" — it's verified AI-generated code.
 
 ## Status
 
-Axiom is in active development. Current capabilities:
+Axiom is in active development:
 
 - ✅ Pure function generation (Python)
 - ✅ FastAPI endpoint generation
-- ✅ Multi-spec dependencies
-- ✅ Deterministic caching
-- ✅ Property-based verification
-- ✅ Basic TypeScript support
-- ✅ IDE integration (VS Code)
+- ✅ Property-based verification (Hypothesis)
 - ✅ Spec inference from Python
-- 🚧 Self-hosting (1% of Axiom is spec-driven)
+- ✅ TypeScript support
+- ✅ IDE integration (VS Code)
+- ✅ Self-hosting (51 spec-driven functions)
 
 ## Documentation
 
-- [Getting Started](docs/getting-started.md) - Installation and first spec tutorial
+- [Getting Started](docs/getting-started.md) - Installation and first spec
 - [Spec Format Reference](docs/spec-format.md) - Complete YAML syntax
 - [CLI Reference](docs/cli-reference.md) - All commands and options
 

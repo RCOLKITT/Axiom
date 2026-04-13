@@ -1,0 +1,188 @@
+axiom: "0.1"
+
+metadata:
+  name: values_equal
+  version: "1.0.0"
+  description: "Deep equality comparison with float tolerance and partial dict matching"
+
+intent: |
+  Compare two values for equality with special handling for:
+  - Floats: use relative/absolute tolerance (1e-9) for comparison
+  - Lists/tuples: recursive element-wise comparison (lengths must match)
+  - Dicts: partial matching - expected keys must exist and match in actual,
+    but actual may have additional keys
+  - Direct equality for all other types
+
+  This is used by the verification harness to compare actual vs expected values.
+
+interface:
+  function_name: values_equal
+  parameters:
+    - name: actual
+      type: Any
+      description: "The actual value produced by the function"
+    - name: expected
+      type: Any
+      description: "The expected value from the spec"
+  returns:
+    type: bool
+    description: "True if values are considered equal"
+
+examples:
+  # Direct equality
+  - name: direct_equality_int
+    input:
+      actual: 42
+      expected: 42
+    expected_output: true
+
+  - name: direct_equality_string
+    input:
+      actual: "hello"
+      expected: "hello"
+    expected_output: true
+
+  - name: direct_inequality
+    input:
+      actual: "foo"
+      expected: "bar"
+    expected_output: false
+
+  # Float comparison with tolerance
+  - name: float_exact
+    input:
+      actual: 3.14159
+      expected: 3.14159
+    expected_output: true
+
+  - name: float_within_tolerance
+    input:
+      actual: 1.0000000001
+      expected: 1.0
+    expected_output: true
+
+  - name: float_outside_tolerance
+    input:
+      actual: 1.1
+      expected: 1.0
+    expected_output: false
+
+  - name: int_float_comparison
+    input:
+      actual: 5
+      expected: 5.0
+    expected_output: true
+
+  # List comparison
+  - name: list_equal
+    input:
+      actual: [1, 2, 3]
+      expected: [1, 2, 3]
+    expected_output: true
+
+  - name: list_different_length
+    input:
+      actual: [1, 2, 3]
+      expected: [1, 2]
+    expected_output: false
+
+  - name: list_different_values
+    input:
+      actual: [1, 2, 3]
+      expected: [1, 2, 4]
+    expected_output: false
+
+  - name: nested_list_equal
+    input:
+      actual: [[1, 2], [3, 4]]
+      expected: [[1, 2], [3, 4]]
+    expected_output: true
+
+  - name: list_with_floats
+    input:
+      actual: [1.0000000001, 2.0]
+      expected: [1.0, 2.0]
+    expected_output: true
+
+  # Mixed list/tuple comparison (treated equivalently)
+  - name: mixed_list_types
+    input:
+      actual: [1, 2]
+      expected: [1, 2]
+    expected_output: true
+
+  # Dict partial matching
+  - name: dict_exact_match
+    input:
+      actual: {"a": 1, "b": 2}
+      expected: {"a": 1, "b": 2}
+    expected_output: true
+
+  - name: dict_partial_match_extra_in_actual
+    input:
+      actual: {"a": 1, "b": 2, "c": 3}
+      expected: {"a": 1, "b": 2}
+    expected_output: true
+
+  - name: dict_missing_expected_key
+    input:
+      actual: {"a": 1}
+      expected: {"a": 1, "b": 2}
+    expected_output: false
+
+  - name: dict_value_mismatch
+    input:
+      actual: {"a": 1, "b": 3}
+      expected: {"a": 1, "b": 2}
+    expected_output: false
+
+  - name: nested_dict
+    input:
+      actual: {"user": {"name": "Alice", "age": 30}}
+      expected: {"user": {"name": "Alice"}}
+    expected_output: true
+
+  - name: dict_with_list_values
+    input:
+      actual: {"items": [1, 2, 3]}
+      expected: {"items": [1, 2, 3]}
+    expected_output: true
+
+  # Edge cases
+  - name: none_equality
+    input:
+      actual: null
+      expected: null
+    expected_output: true
+
+  - name: none_vs_value
+    input:
+      actual: null
+      expected: 1
+    expected_output: false
+
+  - name: empty_list
+    input:
+      actual: []
+      expected: []
+    expected_output: true
+
+  - name: empty_dict
+    input:
+      actual: {}
+      expected: {}
+    expected_output: true
+
+  - name: bool_equality
+    input:
+      actual: true
+      expected: true
+    expected_output: true
+
+  - name: bool_inequality
+    input:
+      actual: true
+      expected: false
+    expected_output: false
+
+# Invariants skipped - Any type parameters don't have Hypothesis strategies

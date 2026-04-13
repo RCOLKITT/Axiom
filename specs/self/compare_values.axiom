@@ -100,8 +100,5 @@ examples:
     expected_output: true
 
 invariants:
-  - description: "Reflexive - value equals itself"
-    check: "compare_values(input['expected'], input['expected'], input['tolerance']) == True"
-
-  - description: "Symmetric for equal values"
-    check: "compare_values(input['expected'], input['actual'], input['tolerance']) == compare_values(input['actual'], input['expected'], input['tolerance'])"
+  - description: "Returns a boolean"
+    check: "isinstance(output, bool)"

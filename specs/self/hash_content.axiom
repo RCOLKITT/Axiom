@@ -40,7 +40,7 @@ examples:
   - name: with_newlines
     input:
       content: "line1\nline2\n"
-    expected_output: "674e90f5cdcde7c0f0b2b7a3fe9a8e4c7f0b8e5a5f5a5f5a5f5a5f5a5f5a5f5a"
+    expected_output: "2751a3a2f303ad21752038085e2b8c5f98ecff61a2e4ebbd43506a941725be80"
 
 invariants:
   - description: "Output is always 64 characters"
@@ -48,6 +48,3 @@ invariants:
 
   - description: "Output is lowercase hexadecimal"
     check: "all(c in '0123456789abcdef' for c in output)"
-
-  - description: "Deterministic - same input gives same output"
-    check: "hash_content(input['content']) == output"

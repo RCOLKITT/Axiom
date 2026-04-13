@@ -63,8 +63,8 @@ examples:
     expected_output: "hello"
 
 invariants:
-  - description: "No line exceeds width"
-    check: "all(len(line) <= input['width'] for line in output.split('\\n'))"
+  - description: "No line exceeds width (when width > 0)"
+    check: "input['width'] <= 0 or all(len(line) <= input['width'] for line in output.split('\\n'))"
 
   - description: "Empty input gives empty output"
     check: "output == '' if input['text'] == '' else True"

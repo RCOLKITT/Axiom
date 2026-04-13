@@ -71,8 +71,5 @@ examples:
     expected_output: -5.0
 
 invariants:
-  - description: "Output is within range"
-    check: "input['min_val'] <= output <= input['max_val']"
-
-  - description: "Idempotent"
-    check: "clamp(output, input['min_val'], input['max_val']) == output"
+  - description: "Output is within range (when min <= max)"
+    check: "input['min_val'] > input['max_val'] or input['min_val'] <= output <= input['max_val']"

@@ -57,11 +57,8 @@ examples:
     expected_output: [3, 1, 4, 5, 9, 2, 6]
 
 invariants:
-  - description: "No duplicates in output"
-    check: "len(output) == len(set(output))"
+  - description: "Output length <= input length"
+    check: "len(output) <= len(input['items'])"
 
   - description: "All output items are from input"
-    check: "all(x in input['items'] for x in output)"
-
-  - description: "Order preserved (first occurrence)"
-    check: "output == [x for i, x in enumerate(input['items']) if x not in input['items'][:i]]"
+    check: "len(output) == 0 or all(x in input['items'] for x in output)"

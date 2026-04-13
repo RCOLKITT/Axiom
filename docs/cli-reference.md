@@ -35,6 +35,27 @@ Creates:
 | `--name NAME` | Project name (default: directory name) |
 | `--force` | Overwrite existing files |
 
+### `axiom quickstart`
+
+Fast-track first build experience. Initializes, creates a sample spec, and builds it.
+
+```bash
+axiom quickstart [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--name NAME` | Project name (default: directory name) |
+
+**Example:**
+
+```bash
+# Quick setup with working example
+axiom quickstart
+
+# Creates project, builds sample spec, shows verification passing
+```
+
 ### `axiom build`
 
 Generate code from spec files.
@@ -131,6 +152,45 @@ axiom watch specs/validate_email.axiom
 
 # Watch without verification (faster)
 axiom watch specs/ --no-verify
+```
+
+### `axiom score`
+
+Check spec completeness and quality.
+
+```bash
+axiom score [OPTIONS] SPEC_PATH
+```
+
+| Argument | Description |
+|----------|-------------|
+| `SPEC_PATH` | Path to .axiom file or directory |
+
+| Option | Description |
+|--------|-------------|
+| `--detailed` | Show detailed breakdown |
+| `--json` | Output as JSON |
+
+**Examples:**
+
+```bash
+# Score a single spec
+axiom score specs/validate_email.axiom
+
+# Score all specs
+axiom score specs/
+
+# Get detailed breakdown
+axiom score specs/validate_email.axiom --detailed
+```
+
+**Output:**
+
+```
+validate_email: 85% complete
+████████░░ Examples: 4/5 recommended
+██████████ Invariants: 2 properties
+Missing: error case for empty string
 ```
 
 ### `axiom explain`
