@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import structlog
 
+from axiom._generated import truncate_string
 from axiom.verify.models import CheckStatus, VerificationResult
 
 if TYPE_CHECKING:
@@ -103,14 +104,14 @@ def _format_failures(result: VerificationResult) -> list[str]:
     # Invariant failures
     for inv in result.invariant_results:
         if inv.status == CheckStatus.FAILED:
-            desc = inv.description[:50] + "..." if len(inv.description) > 50 else inv.description
+            desc = truncate_string(inv.description, 50, "...")
             if inv.counterexample:
                 failures.append(f"[Invariant] {desc}")
                 failures.append(f"            Counterexample: {inv.counterexample}")
             elif inv.error_message:
                 failures.append(f"[Invariant] {desc}: {inv.error_message}")
         elif inv.status == CheckStatus.ERROR:
-            desc = inv.description[:50] + "..." if len(inv.description) > 50 else inv.description
+            desc = truncate_string(inv.description, 50, "...")
             failures.append(f"[Invariant] {desc}: ERROR - {inv.error_message}")
 
     # Performance failures

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import click
 import structlog
 
+from axiom._generated import pluralize
 from axiom.config import load_settings
 from axiom.errors import AxiomError
 from axiom.escape.verifier import HandWrittenVerificationResult, verify_hand_written_interface
@@ -224,9 +225,9 @@ def _verify_directory(
     if failed > 0 or escape_failed > 0:
         msg_parts = []
         if failed > 0:
-            msg_parts.append(f"{failed} spec(s)")
+            msg_parts.append(pluralize(failed, "spec"))
         if escape_failed > 0:
-            msg_parts.append(f"{escape_failed} escape hatch(es)")
+            msg_parts.append(pluralize(escape_failed, "escape hatch", "escape hatches"))
         raise click.ClickException(f"{' and '.join(msg_parts)} failed verification")
 
 
@@ -470,7 +471,7 @@ def _verify_sandboxed(
 
     if failed_specs:
         raise click.ClickException(
-            f"{len(failed_specs)} spec(s) failed verification: {', '.join(failed_specs)}"
+            f"{pluralize(len(failed_specs), 'spec')} failed verification: {', '.join(failed_specs)}"
         )
 
 
@@ -546,7 +547,7 @@ def verify_all(
 
             failed = sum(1 for r in results if not r.success)
             if failed > 0:
-                raise click.ClickException(f"{failed} spec(s) failed verification")
+                raise click.ClickException(f"{pluralize(failed, 'spec')} failed verification")
 
     except click.ClickException:
         raise

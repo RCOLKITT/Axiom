@@ -15,6 +15,7 @@ import yaml
 from lsprotocol import types as lsp
 from pydantic import ValidationError
 
+from axiom._generated import escape_regex
 from axiom.security.scanner import scan_for_secrets
 from axiom.spec.models import Spec
 
@@ -277,7 +278,7 @@ def _find_field_line(source: str, field: str) -> int:
     """
     lines = source.split("\n")
     # Pattern to match field at start of line or after whitespace
-    pattern = re.compile(rf"^\s*{re.escape(field)}:")
+    pattern = re.compile(rf"^\s*{escape_regex(field)}:")
     for i, line in enumerate(lines):
         if pattern.match(line):
             return i

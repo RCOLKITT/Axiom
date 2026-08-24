@@ -12,6 +12,8 @@ import structlog
 import yaml
 from lsprotocol import types as lsp
 
+from axiom._generated import escape_regex
+
 if TYPE_CHECKING:
     pass
 
@@ -87,7 +89,7 @@ def _find_section_line(lines: list[str], section_name: str) -> int | None:
     Returns:
         Line number (0-indexed) or None if not found.
     """
-    pattern = rf"^{re.escape(section_name)}:"
+    pattern = rf"^{escape_regex(section_name)}:"
     for i, line in enumerate(lines):
         if re.match(pattern, line):
             return i
@@ -270,7 +272,7 @@ def _find_nested_key(lines: list[str], section_start: int, key: str) -> int | No
     Returns:
         Line number or None if not found.
     """
-    pattern = rf"^\s+{re.escape(key)}:"
+    pattern = rf"^\s+{escape_regex(key)}:"
     for i in range(section_start + 1, len(lines)):
         line = lines[i]
         # Stop if we hit another top-level section
@@ -292,7 +294,7 @@ def _find_list_item_name(lines: list[str], section_start: int, name: str) -> int
     Returns:
         Line number or None if not found.
     """
-    pattern = rf"^\s+-\s*name:\s*['\"]?{re.escape(name)}['\"]?"
+    pattern = rf"^\s+-\s*name:\s*['\"]?{escape_regex(name)}['\"]?"
     for i in range(section_start + 1, len(lines)):
         line = lines[i]
         # Stop if we hit another top-level section
@@ -314,7 +316,7 @@ def _find_list_item_description(lines: list[str], section_start: int, desc: str)
     Returns:
         Line number or None if not found.
     """
-    desc_escaped = re.escape(desc)
+    desc_escaped = escape_regex(desc)
     pattern = rf"^\s+-\s*description:\s*['\"]?{desc_escaped}"
     for i in range(section_start + 1, len(lines)):
         line = lines[i]

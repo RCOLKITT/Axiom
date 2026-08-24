@@ -9,6 +9,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from axiom._generated import validate_python_identifier
+
 
 class Parameter(BaseModel):
     """A function parameter definition.
@@ -29,7 +31,7 @@ class Parameter(BaseModel):
     @classmethod
     def validate_name(cls, v: str) -> str:
         """Validate that name is a valid Python identifier."""
-        if not v.isidentifier():
+        if not validate_python_identifier(v):
             raise ValueError(f"Parameter name '{v}' is not a valid Python identifier")
         return v
 
@@ -63,7 +65,7 @@ class FunctionInterface(BaseModel):
     @classmethod
     def validate_function_name(cls, v: str) -> str:
         """Validate that function_name is a valid Python identifier."""
-        if not v.isidentifier():
+        if not validate_python_identifier(v):
             raise ValueError(f"Function name '{v}' is not a valid Python identifier")
         return v
 
@@ -94,7 +96,7 @@ class RequestField(BaseModel):
     @classmethod
     def validate_name(cls, v: str) -> str:
         """Validate that name is a valid Python identifier."""
-        if not v.isidentifier():
+        if not validate_python_identifier(v):
             raise ValueError(f"Field name '{v}' is not a valid Python identifier")
         return v
 
@@ -188,7 +190,7 @@ class FastAPIInterface(BaseModel):
     @classmethod
     def validate_function_name(cls, v: str) -> str:
         """Validate that function_name is a valid Python identifier."""
-        if not v.isidentifier():
+        if not validate_python_identifier(v):
             raise ValueError(f"Function name '{v}' is not a valid Python identifier")
         return v
 
@@ -262,7 +264,7 @@ class FunctionSignature(BaseModel):
     @classmethod
     def validate_name(cls, v: str) -> str:
         """Validate that name is a valid Python identifier."""
-        if not v.isidentifier():
+        if not validate_python_identifier(v):
             raise ValueError(f"Function name '{v}' is not a valid Python identifier")
         return v
 

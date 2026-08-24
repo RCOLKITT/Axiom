@@ -13,6 +13,7 @@ from typing import Any
 
 import structlog
 
+from axiom._generated import values_equal
 from axiom.spec.models import Example, Spec
 from axiom.verify.models import CheckStatus, ExampleResult
 
@@ -182,7 +183,7 @@ def _run_value_example(
 
         expected = example.expected_output.value
 
-        if _values_equal(actual, expected):
+        if values_equal(actual, expected):
             return ExampleResult(
                 name=example.name,
                 status=CheckStatus.PASSED,
@@ -268,48 +269,6 @@ def _run_exception_example(
             actual=f"raises {actual_exc_name}",
             duration_ms=duration_ms,
         )
-
-
-def _values_equal(actual: Any, expected: Any) -> bool:
-    """Check if two values are equal.
-
-    Handles common edge cases like float comparison.
-    For dicts, uses partial matching (expected keys must exist and match in actual,
-    but actual may have additional keys).
-
-    Args:
-        actual: The actual value.
-        expected: The expected value.
-
-    Returns:
-        True if values are considered equal.
-    """
-    # Direct equality
-    if actual == expected:
-        return True
-
-    # Handle float comparison (consistent with TypeScript runner)
-    if isinstance(actual, (int, float)) and isinstance(expected, (int, float)):
-        # Use both relative (1e-9) and absolute (1e-9) tolerance
-        return abs(expected - actual) <= max(1e-9 * max(abs(expected), abs(actual)), 1e-9)
-
-    # Handle list/tuple comparison
-    if isinstance(actual, (list, tuple)) and isinstance(expected, (list, tuple)):
-        if len(actual) != len(expected):
-            return False
-        return all(_values_equal(a, e) for a, e in zip(actual, expected))
-
-    # Handle dict comparison - partial matching
-    # Expected keys must exist and match in actual, but actual may have extra keys
-    if isinstance(actual, dict) and isinstance(expected, dict):
-        for key in expected:
-            if key not in actual:
-                return False
-            if not _values_equal(actual[key], expected[key]):
-                return False
-        return True
-
-    return False
 
 
 def _format_value(value: Any) -> str:

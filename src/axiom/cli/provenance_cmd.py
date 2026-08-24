@@ -10,6 +10,7 @@ from datetime import datetime
 import click
 import structlog
 
+from axiom._generated import format_duration
 from axiom.config import load_settings
 from axiom.security.provenance import ProvenanceLog
 
@@ -111,7 +112,7 @@ def show(
         click.echo(f"    Spec: {entry.spec_name}")
         click.echo(f"    Model: {entry.model}")
         if entry.duration_ms:
-            click.echo(f"    Duration: {entry.duration_ms}ms")
+            click.echo(f"    Duration: {format_duration(entry.duration_ms)}")
         if entry.failure_reason:
             click.echo(f"    Failure: {entry.failure_reason}")
         click.echo("")
@@ -154,7 +155,7 @@ def history(spec_name: str) -> None:
         click.echo(f"      Model: {entry.model}")
         click.echo(f"      Axiom version: {entry.axiom_version}")
         if entry.duration_ms:
-            click.echo(f"      Duration: {entry.duration_ms}ms")
+            click.echo(f"      Duration: {format_duration(entry.duration_ms)}")
         if entry.failure_reason:
             click.echo(f"      Failure: {entry.failure_reason}")
         if entry.user:

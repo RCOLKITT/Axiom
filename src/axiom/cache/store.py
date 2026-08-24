@@ -14,6 +14,7 @@ from typing import Any
 
 import structlog
 
+from axiom._generated import format_bytes
 from axiom.cache.keys import compute_cache_key, get_cache_filename
 from axiom.spec.models import Spec
 
@@ -307,15 +308,8 @@ class CacheStore:
             "total_entries": len(entries),
             "unique_specs": len(specs),
             "total_size_bytes": total_size,
-            "total_size_human": _format_bytes(total_size),
+            "total_size_human": format_bytes(total_size, binary=True),
             "entries_by_spec": {name: len(es) for name, es in specs.items()},
         }
 
 
-def _format_bytes(size: int) -> str:
-    """Format bytes as human-readable string."""
-    for unit in ("B", "KB", "MB", "GB"):
-        if size < 1024:
-            return f"{size:.1f} {unit}"
-        size //= 1024
-    return f"{size:.1f} TB"

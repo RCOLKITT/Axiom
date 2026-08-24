@@ -5,11 +5,11 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
+from axiom._generated import type_to_isinstance
 from axiom.lint.fixer import (
     FixResult,
     _generate_default_value,
     _generate_error_value,
-    _type_to_isinstance,
     fix_spec_file,
     format_fix_result,
 )
@@ -71,17 +71,17 @@ class TestTypeToIsinstance:
     """Tests for type to isinstance conversion."""
 
     def test_basic_types(self) -> None:
-        assert _type_to_isinstance("str") == "str"
-        assert _type_to_isinstance("int") == "int"
-        assert _type_to_isinstance("float") == "float"
-        assert _type_to_isinstance("bool") == "bool"
+        assert type_to_isinstance("str") == "str"
+        assert type_to_isinstance("int") == "int"
+        assert type_to_isinstance("float") == "float"
+        assert type_to_isinstance("bool") == "bool"
 
     def test_collection_types(self) -> None:
-        assert _type_to_isinstance("list") == "list"
-        assert _type_to_isinstance("dict") == "dict"
+        assert type_to_isinstance("list") == "list"
+        assert type_to_isinstance("dict") == "dict"
 
     def test_unknown_type(self) -> None:
-        assert _type_to_isinstance("CustomType") is None
+        assert type_to_isinstance("CustomType") is None
 
 
 class TestFixResult:

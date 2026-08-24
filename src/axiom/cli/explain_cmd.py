@@ -7,6 +7,7 @@ from pathlib import Path
 import click
 import structlog
 
+from axiom._generated import truncate_string
 from axiom.spec.parser import parse_spec_file
 
 logger = structlog.get_logger()
@@ -24,21 +25,6 @@ def _format_type(type_str: str | None) -> str:
     if not type_str:
         return "Any"
     return type_str
-
-
-def _truncate(text: str, max_length: int = 60) -> str:
-    """Truncate text with ellipsis.
-
-    Args:
-        text: The text to truncate.
-        max_length: Maximum length before truncation.
-
-    Returns:
-        Truncated text.
-    """
-    if len(text) <= max_length:
-        return text
-    return text[: max_length - 3] + "..."
 
 
 @click.command()
@@ -92,7 +78,7 @@ def explain(_ctx: click.Context, spec_file: str, full: bool) -> None:
     else:
         # Show first 3 lines
         for line in intent_lines[:3]:
-            click.echo(f"  {_truncate(line, 70)}")
+            click.echo(f"  {truncate_string(line, 70, '...')}")
         if len(intent_lines) > 3:
             click.echo(f"  ... ({len(intent_lines) - 3} more lines)")
     click.echo("")
@@ -168,7 +154,7 @@ def explain(_ctx: click.Context, spec_file: str, full: bool) -> None:
                     click.echo(f"    Check: {inv.check}")
         else:
             for inv in invariants[:3]:
-                click.echo(f"  • {_truncate(inv.description, 55)}")
+                click.echo(f"  • {truncate_string(inv.description, 55, '...')}")
             if len(invariants) > 3:
                 click.echo(f"  ... and {len(invariants) - 3} more")
     click.echo("")

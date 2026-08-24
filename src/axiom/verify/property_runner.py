@@ -11,6 +11,7 @@ from typing import Any
 
 import structlog
 
+from axiom._generated import truncate_string
 from axiom.spec.models import Invariant, Spec
 from axiom.verify.models import CheckStatus, InvariantResult
 
@@ -102,7 +103,7 @@ def run_invariants(
         results.append(result)
         logger.debug(
             "Invariant result",
-            description=invariant.description[:50],
+            description=truncate_string(invariant.description, 50, "..."),
             status=result.status.value,
         )
 

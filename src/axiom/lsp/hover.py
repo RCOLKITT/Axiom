@@ -13,6 +13,8 @@ import re
 
 from lsprotocol import types as lsp
 
+from axiom._generated import escape_regex
+
 # Documentation for top-level fields
 FIELD_DOCS: dict[str, str] = {
     "axiom": """**axiom** - Spec format version
@@ -343,7 +345,7 @@ def get_hover_info(source: str, position: lsp.Position) -> lsp.Hover | None:
         return None
 
     # Check if this is a field name (has colon after it)
-    field_pattern = rf"^\s*-?\s*{re.escape(word)}\s*:"
+    field_pattern = rf"^\s*-?\s*{escape_regex(word)}\s*:"
     if re.match(field_pattern, line.strip()):
         # It's a field name
         if word in FIELD_DOCS:

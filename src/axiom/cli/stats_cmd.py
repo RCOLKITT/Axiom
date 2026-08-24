@@ -11,6 +11,7 @@ from typing import Any
 import click
 import structlog
 
+from axiom._generated import count_lines
 from axiom.cache.store import CacheStore
 from axiom.config import load_settings
 from axiom.spec.parser import parse_spec_file
@@ -21,6 +22,8 @@ logger = structlog.get_logger()
 def _count_lines(path: Path) -> int:
     """Count non-empty, non-comment lines in a file.
 
+    Uses the spec-driven count_lines function internally.
+
     Args:
         path: Path to the file.
 
@@ -30,15 +33,10 @@ def _count_lines(path: Path) -> int:
     if not path.exists():
         return 0
 
-    count = 0
     try:
-        for line in path.read_text(encoding="utf-8").splitlines():
-            stripped = line.strip()
-            if stripped and not stripped.startswith("#"):
-                count += 1
+        return count_lines(path.read_text(encoding="utf-8"))
     except Exception:
         return 0
-    return count
 
 
 def _format_percentage(part: int, total: int) -> str:

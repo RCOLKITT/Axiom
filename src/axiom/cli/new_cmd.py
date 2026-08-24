@@ -6,6 +6,8 @@ from pathlib import Path
 
 import click
 
+from axiom._generated import camel_to_snake
+
 # Spec templates
 TEMPLATES: dict[str, str] = {
     "function": """axiom: "0.1"
@@ -198,23 +200,6 @@ invariants:
 }
 
 
-def _to_snake_case(name: str) -> str:
-    """Convert a name to snake_case.
-
-    Args:
-        name: The name to convert.
-
-    Returns:
-        Snake case version of the name.
-    """
-    import re
-
-    # Insert underscore before uppercase letters and convert to lowercase
-    s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
-    s2 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1)
-    return s2.lower().replace("-", "_").replace(" ", "_")
-
-
 @click.command()
 @click.argument("template", type=click.Choice(list(TEMPLATES.keys())))
 @click.argument("name")
@@ -244,8 +229,8 @@ def new(template: str, name: str, description: str, output_dir: str, force: bool
       axiom new validator is_valid_url -d "Validates URL format"
       axiom new transformer slugify -o specs/utils/
     """
-    # Normalize name
-    spec_name = _to_snake_case(name)
+    # Normalize name to snake_case
+    spec_name = camel_to_snake(name)
 
     # Use name as description if not provided
     if not description:

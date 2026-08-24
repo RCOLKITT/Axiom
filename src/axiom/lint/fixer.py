@@ -13,6 +13,8 @@ from typing import TYPE_CHECKING
 import structlog
 import yaml
 
+from axiom._generated import type_to_isinstance
+
 if TYPE_CHECKING:
     from axiom.spec.models import Spec
 
@@ -277,7 +279,7 @@ def _generate_default_invariant(spec: Spec) -> dict[str, object]:
     if hasattr(spec.interface, "returns") and spec.interface.returns:
         return_type = spec.interface.returns.type
         if return_type:
-            type_check = _type_to_isinstance(return_type)
+            type_check = type_to_isinstance(return_type)
             if type_check:
                 return {
                     "description": f"Output is always {return_type}",
@@ -289,39 +291,6 @@ def _generate_default_invariant(spec: Spec) -> dict[str, object]:
         "description": "Output is valid",
         "check": "output is not None",
     }
-
-
-def _type_to_isinstance(type_str: str) -> str | None:
-    """Convert a type string to isinstance check.
-
-    Args:
-        type_str: The type string.
-
-    Returns:
-        The type for isinstance or None.
-    """
-    type_lower = type_str.lower()
-
-    mappings = {
-        "str": "str",
-        "string": "str",
-        "int": "int",
-        "integer": "int",
-        "float": "float",
-        "number": "(int, float)",
-        "bool": "bool",
-        "boolean": "bool",
-        "list": "list",
-        "array": "list",
-        "dict": "dict",
-        "object": "dict",
-    }
-
-    for key, value in mappings.items():
-        if key in type_lower:
-            return value
-
-    return None
 
 
 def _dump_yaml(data: dict[str, object]) -> str:

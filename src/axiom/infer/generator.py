@@ -12,6 +12,7 @@ from typing import Any
 import structlog
 import yaml
 
+from axiom._generated import generate_default_value, generate_error_value, type_to_isinstance
 from axiom.infer.analyzer import FunctionInfo
 
 logger = structlog.get_logger()
@@ -260,7 +261,7 @@ def _build_invariants(func_info: FunctionInfo) -> list[dict[str, Any]]:
 
     # Add type invariant if return type is known
     if func_info.returns and func_info.returns.type:
-        type_check = _type_to_isinstance(func_info.returns.type)
+        type_check = type_to_isinstance(func_info.returns.type)
         if type_check:
             invariants.append(
                 {
@@ -304,7 +305,7 @@ def _generate_placeholder_input(func_info: FunctionInfo) -> dict[str, Any]:
     inputs: dict[str, Any] = {}
 
     for param in func_info.parameters:
-        inputs[param.name] = _type_to_default(param.type)
+        inputs[param.name] = generate_default_value(param.type)
 
     return inputs
 
@@ -321,111 +322,9 @@ def _generate_error_input(func_info: FunctionInfo) -> dict[str, Any]:
     inputs: dict[str, Any] = {}
 
     for param in func_info.parameters:
-        inputs[param.name] = _type_to_error_value(param.type)
+        inputs[param.name] = generate_error_value(param.type)
 
     return inputs
-
-
-def _type_to_default(type_str: str | None) -> Any:
-    """Convert type to a default placeholder value.
-
-    Args:
-        type_str: The type string.
-
-    Returns:
-        A default value for that type.
-    """
-    if not type_str:
-        return "example"
-
-    type_lower = type_str.lower()
-
-    if "str" in type_lower:
-        return "example"
-    if "int" in type_lower:
-        return 42
-    if "float" in type_lower:
-        return 3.14
-    if "bool" in type_lower:
-        return True
-    if "list" in type_lower:
-        return ["item1", "item2"]
-    if "dict" in type_lower:
-        return {"key": "value"}
-    if "optional" in type_lower:
-        return None
-    if "path" in type_lower:
-        return "/path/to/file"
-
-    return "example"
-
-
-def _type_to_error_value(type_str: str | None) -> Any:
-    """Convert type to an error-inducing value.
-
-    Args:
-        type_str: The type string.
-
-    Returns:
-        A value likely to cause errors.
-    """
-    if not type_str:
-        return None
-
-    type_lower = type_str.lower()
-
-    if "str" in type_lower:
-        return ""
-    if "int" in type_lower:
-        return -1
-    if "float" in type_lower:
-        return float("inf")
-    if "list" in type_lower:
-        return []
-    if "dict" in type_lower:
-        return {}
-    if "path" in type_lower:
-        return "/nonexistent/path"
-
-    return None
-
-
-def _type_to_isinstance(type_str: str) -> str | None:
-    """Convert type string to isinstance check.
-
-    Args:
-        type_str: The type string.
-
-    Returns:
-        Type for isinstance or None.
-    """
-    type_lower = type_str.lower()
-
-    # Remove optional wrapper
-    if "optional[" in type_lower:
-        return None  # Can be None, so no check
-
-    mappings = {
-        "str": "str",
-        "string": "str",
-        "int": "int",
-        "integer": "int",
-        "float": "float",
-        "number": "(int, float)",
-        "bool": "bool",
-        "boolean": "bool",
-        "list": "list",
-        "array": "list",
-        "dict": "dict",
-        "tuple": "tuple",
-        "set": "set",
-    }
-
-    for key, value in mappings.items():
-        if key in type_lower:
-            return value
-
-    return None
 
 
 def _clean_docstring(docstring: str) -> str:
